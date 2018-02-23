@@ -90,7 +90,7 @@ void py_ReadMesh (char *MshNam, char *SolNam, PyObject *pyVer, PyObject *pyTri, 
 	}
 	
 	for (i=1; i<=Msh->NbrTet; i++){
-		for (j=0; j<4; j++)
+		for (j=0; j<5; j++)
 			PyList_Append(pyTet, PyInt_FromLong(Msh->Tet[i][j]));
 	}
 	
@@ -211,9 +211,6 @@ void py_WriteMesh(char *MshNam, char *SolNam, PyObject *pyVer, PyObject *pyTri, 
 				
 				Msh->NbrTet++;
 				AddTetrahedron(Msh,Msh->NbrTet,is,is[4]);
-				
-				//printf("-- Add tet %d : %d %d %d (ref %d)\n", Msh->NbrTet, is[0], is[1], is[2], is[3],ref);
-				//exit(1);
 				
       }
   }
