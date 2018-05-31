@@ -118,7 +118,7 @@ int SplitSolution (Mesh *Msh, char *prefix, char *adap_sensor)
 	double *OutSol = NULL;
 	char OutNam[256];
 	
-	int pres_flag=0, mach_flag=0;
+	int pres_flag=0, mach_flag=0, temp_flag=0;
 		
 	if (!strcmp(adap_sensor, "MACH_PRES")) {
 		NbrFld = 2;
@@ -147,13 +147,17 @@ int SplitSolution (Mesh *Msh, char *prefix, char *adap_sensor)
 
 	int iMach = -1;
 	int iPres = -1;
+	int iTemp = -1;
 		
 	for (i=0; i<Msh->NbrFld; i++) {
-		if ( !strcmp(Msh->SolTag[i], "Mach") ) {
+		if ( !strcmp(Msh->SolTag[i], "Mach") && mach_flag == 1 ) {
 			iMach = i;
 		}
-		if ( !strcmp(Msh->SolTag[i], "Pressure") ) {
+		if ( !strcmp(Msh->SolTag[i], "Pressure") && pres_flag == 1 ) {
 			iPres = i;
+		}
+		if ( !strcmp(Msh->SolTag[i], "Temperature") && temp_flag == 1 ) {
+			iTemp = i;
 		}
 	}
 	

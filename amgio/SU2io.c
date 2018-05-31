@@ -100,7 +100,6 @@ int AddSU2MeshSize(char *FilNam, int *SizMsh)
 		
 		CptElt = GetSU2KeywordValue (FilHdl, "MARKER_ELEMS=");
 		
-		
 	  for (iElt=0; iElt<CptElt; iElt++) {
 	    fscanf(FilHdl, "%d", &typ);
 	    if ( typ == SU2_TRIANGLE ) {
