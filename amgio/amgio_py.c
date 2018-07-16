@@ -386,7 +386,7 @@ void py_WriteSolution(char *SolNam, PyObject *pyVer, PyObject *pySol, PyObject *
 	       	PyObject *oo = PyList_GetItem(pySolHeader,j);
 	       	if ( PyFloat_Check(oo) )
 	       	{
-						sprintf(SolTag[j], (char*) PyString_AS_STRING(oo));
+						sprintf(SolTag[j], "%s", (char*) PyString_AS_STRING(oo));
 	       	}
 				}
 				else 
