@@ -145,11 +145,10 @@ int LoadGMFMesh (char *MshNam, Mesh *Msh)
 	NbrHex = GmfStatKwd(InpMsh, GmfHexahedra);	
 	GmfGotoKwd(InpMsh, GmfHexahedra);
   for (i=1; i<=NbrHex; ++i) {
-		GmfGetLin(InpMsh, GmfHexahedra, &bufInt[0], &bufInt[1], &bufInt[2], &bufInt[3], &ref);
+		GmfGetLin(InpMsh, GmfHexahedra, &bufInt[0], &bufInt[1], &bufInt[2], &bufInt[3], &bufInt[4], &bufInt[5], &bufInt[6], &bufInt[7], &ref);
 		Msh->NbrHex++;
 		AddHexahedron(Msh,Msh->NbrHex,bufInt,ref);
   }
-	
 	
 	if ( !GmfCloseMesh(InpMsh) ) {
     printf("  ## ERROR: Cannot close solution file %s ! \n",MshNam);
