@@ -39,7 +39,7 @@ int AddGMFMeshSize (char *MshNam, int *SizMsh)
 
 int LoadGMFMesh (char *MshNam, Mesh *Msh)
 {
-	int i;
+	int i, idx;
 	int dim, FilVer, InpMsh, ref; 
 	double bufDbl[3];
 	int bufInt[8], is[8];

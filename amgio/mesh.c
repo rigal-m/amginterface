@@ -8,6 +8,7 @@ void AddEdge(Mesh *Msh, int idx, int *is, int ref)
 {
   if ( idx > Msh->MaxNbrEfr ) {
     printf("  ## ERROR : Max number of boundary edges reached.\n");
+		printf("MAX = %d, idx = %d \n", Msh->MaxNbrEfr, idx);
     exit(1);
   }
   Msh->Efr[idx][0] = is[0];

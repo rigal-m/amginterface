@@ -64,7 +64,11 @@ int py_SplitSolution(char *SolNam, int dim, char *prefix, char *adap_sensor)
 }
 
 
-void py_ReadMesh (char *MshNam, char *SolNam, PyObject *pyVer, PyObject *pyTri, PyObject *pyTet, PyObject *pyEdg,
+
+
+
+void py_ReadMesh (char *MshNam, char *SolNam, PyObject *pyVer, PyObject *pyTri, PyObject *pyTet, PyObject *pyEdg, PyObject *pyHex, 
+PyObject *pyQua, PyObject *pyPyr, PyObject *pyPri, 
  PyObject *pySol, PyObject *pySolHeader,  PyObject *pyMarkers)
 {
 	int i, j, d;
@@ -99,6 +103,26 @@ void py_ReadMesh (char *MshNam, char *SolNam, PyObject *pyVer, PyObject *pyTri, 
 			PyList_Append(pyEdg, PyInt_FromLong(Msh->Efr[i][j]));
 	}
 	
+	for (i=1; i<=Msh->NbrHex; i++){
+		for (j=0; j<9; j++)
+			PyList_Append(pyHex, PyInt_FromLong(Msh->Hex[i][j]));
+	}
+	
+	for (i=1; i<=Msh->NbrQua; i++){
+		for (j=0; j<5; j++)
+			PyList_Append(pyQua, PyInt_FromLong(Msh->Qua[i][j]));
+	}
+	
+	for (i=1; i<=Msh->NbrPyr; i++){
+		for (j=0; j<6; j++)
+			PyList_Append(pyPyr, PyInt_FromLong(Msh->Pyr[i][j]));
+	}
+	
+	for (i=1; i<=Msh->NbrPri; i++){
+		for (j=0; j<7; j++)
+			PyList_Append(pyPri, PyInt_FromLong(Msh->Pri[i][j]));
+	}
+	
 	//--- First row of Markers contains dimension
 	PyList_Append(pyMarkers, PyInt_FromLong(Msh->Dim));
 	for (i=1; i<=Msh->NbrMarkers; i++){
@@ -127,7 +151,8 @@ void py_ReadMesh (char *MshNam, char *SolNam, PyObject *pyVer, PyObject *pyTri, 
 }
 
 
-void py_WriteMesh(char *MshNam, char *SolNam, PyObject *pyVer, PyObject *pyTri, PyObject *pyTet, PyObject *pyEdg, PyObject *pySol, PyObject *pyMarkers, int Dim)
+void py_WriteMesh(char *MshNam, char *SolNam, PyObject *pyVer, PyObject *pyTri, PyObject *pyTet, PyObject *pyEdg,  PyObject *pyHex, 
+PyObject *pyQua, PyObject *pyPyr, PyObject *pyPri, PyObject *pySol, PyObject *pyMarkers, int Dim)
 {
 	int i, j;
 	Mesh *Msh= NULL;
@@ -154,7 +179,19 @@ void py_WriteMesh(char *MshNam, char *SolNam, PyObject *pyVer, PyObject *pyTri, 
 	
 	if ( PyList_Check(pyEdg) )
 		SizMsh[GmfEdges] = PyList_Size(pyEdg);
+
+	if ( PyList_Check(pyHex) )
+		SizMsh[GmfHexahedra] = PyList_Size(pyHex);
 	
+	if ( PyList_Check(pyQua) )
+		SizMsh[GmfQuadrilaterals] = PyList_Size(pyQua);
+	
+	if ( PyList_Check(pyPyr) )
+		SizMsh[GmfPyramids] = PyList_Size(pyPyr);
+	
+	if ( PyList_Check(pyPri) )
+		SizMsh[GmfPrisms] = PyList_Size(pyPri);
+
 	if ( PyList_Check(pyMarkers) )
 		NbrMarkers = PyList_Size(pyMarkers);
 	
@@ -238,6 +275,107 @@ void py_WriteMesh(char *MshNam, char *SolNam, PyObject *pyVer, PyObject *pyTri, 
 				AddEdge(Msh,Msh->NbrEfr,is,ref);
       }
   }
+	
+	
+	if ( PyList_Check(pyHex) )
+  {
+			siz = PyList_Size(pyHex);
+			
+			for (i=0; i<siz/9; i++)
+      {
+				idx = 9*i;
+				
+				for (j=0; j<8; j++) {
+	       	PyObject *oo = PyList_GetItem(pyHex,idx+j);
+	       	if ( PyInt_Check(oo) )
+	       	{
+						is[j] = (int) PyInt_AS_LONG(oo);
+	       	}
+				}
+				
+				PyObject *oo = PyList_GetItem(pyHex,idx+2);
+				ref = (int) PyInt_AS_LONG(oo);
+				
+				Msh->NbrHex++;
+				AddHexahedron(Msh,Msh->NbrHex,is,ref);
+      }
+  }
+	
+	if ( PyList_Check(pyEdg) )
+  {
+			siz = PyList_Size(pyEdg);
+			
+			printf("siz %d\n", siz);
+			
+			for (i=0; i<siz/3; i++)
+      {
+				idx = 3*i;
+				
+				for (j=0; j<2; j++) {
+	       	PyObject *oo = PyList_GetItem(pyEdg,idx+j);
+	       	if ( PyInt_Check(oo) )
+	       	{
+						is[j] = (int) PyInt_AS_LONG(oo);
+	       	}
+				}
+				
+				PyObject *oo = PyList_GetItem(pyEdg,idx+2);
+				ref = (int) PyInt_AS_LONG(oo);
+				
+				Msh->NbrEfr++;
+				AddEdge(Msh,Msh->NbrEfr,is,ref);
+      }
+  }
+	
+	if ( PyList_Check(pyEdg) )
+  {
+			siz = PyList_Size(pyEdg);
+			
+			for (i=0; i<siz/3; i++)
+      {
+				idx = 3*i;
+				
+				for (j=0; j<2; j++) {
+	       	PyObject *oo = PyList_GetItem(pyEdg,idx+j);
+	       	if ( PyInt_Check(oo) )
+	       	{
+						is[j] = (int) PyInt_AS_LONG(oo);
+	       	}
+				}
+				
+				PyObject *oo = PyList_GetItem(pyEdg,idx+2);
+				ref = (int) PyInt_AS_LONG(oo);
+				
+				Msh->NbrEfr++;
+				AddEdge(Msh,Msh->NbrEfr,is,ref);
+      }
+  }
+	
+	if ( PyList_Check(pyEdg) )
+  {
+			siz = PyList_Size(pyEdg);
+			
+			for (i=0; i<siz/3; i++)
+      {
+				idx = 3*i;
+				
+				for (j=0; j<2; j++) {
+	       	PyObject *oo = PyList_GetItem(pyEdg,idx+j);
+	       	if ( PyInt_Check(oo) )
+	       	{
+						is[j] = (int) PyInt_AS_LONG(oo);
+	       	}
+				}
+				
+				PyObject *oo = PyList_GetItem(pyEdg,idx+2);
+				ref = (int) PyInt_AS_LONG(oo);
+				
+				Msh->NbrEfr++;
+				AddEdge(Msh,Msh->NbrEfr,is,ref);
+      }
+  }
+	
+	
 	
 	if ( PyList_Check(pyVer) )
   {
