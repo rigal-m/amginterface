@@ -251,7 +251,7 @@ PyObject *pyQua, PyObject *pyPyr, PyObject *pyPri, PyObject *pySol, PyObject *py
 				
       }
   }
-	
+		
 	if ( PyList_Check(pyEdg) )
   {
 			siz = PyList_Size(pyEdg);
@@ -300,83 +300,7 @@ PyObject *pyQua, PyObject *pyPyr, PyObject *pyPri, PyObject *pySol, PyObject *py
 				AddHexahedron(Msh,Msh->NbrHex,is,ref);
       }
   }
-	
-	if ( PyList_Check(pyEdg) )
-  {
-			siz = PyList_Size(pyEdg);
-			
-			printf("siz %d\n", siz);
-			
-			for (i=0; i<siz/3; i++)
-      {
-				idx = 3*i;
-				
-				for (j=0; j<2; j++) {
-	       	PyObject *oo = PyList_GetItem(pyEdg,idx+j);
-	       	if ( PyInt_Check(oo) )
-	       	{
-						is[j] = (int) PyInt_AS_LONG(oo);
-	       	}
-				}
-				
-				PyObject *oo = PyList_GetItem(pyEdg,idx+2);
-				ref = (int) PyInt_AS_LONG(oo);
-				
-				Msh->NbrEfr++;
-				AddEdge(Msh,Msh->NbrEfr,is,ref);
-      }
-  }
-	
-	if ( PyList_Check(pyEdg) )
-  {
-			siz = PyList_Size(pyEdg);
-			
-			for (i=0; i<siz/3; i++)
-      {
-				idx = 3*i;
-				
-				for (j=0; j<2; j++) {
-	       	PyObject *oo = PyList_GetItem(pyEdg,idx+j);
-	       	if ( PyInt_Check(oo) )
-	       	{
-						is[j] = (int) PyInt_AS_LONG(oo);
-	       	}
-				}
-				
-				PyObject *oo = PyList_GetItem(pyEdg,idx+2);
-				ref = (int) PyInt_AS_LONG(oo);
-				
-				Msh->NbrEfr++;
-				AddEdge(Msh,Msh->NbrEfr,is,ref);
-      }
-  }
-	
-	if ( PyList_Check(pyEdg) )
-  {
-			siz = PyList_Size(pyEdg);
-			
-			for (i=0; i<siz/3; i++)
-      {
-				idx = 3*i;
-				
-				for (j=0; j<2; j++) {
-	       	PyObject *oo = PyList_GetItem(pyEdg,idx+j);
-	       	if ( PyInt_Check(oo) )
-	       	{
-						is[j] = (int) PyInt_AS_LONG(oo);
-	       	}
-				}
-				
-				PyObject *oo = PyList_GetItem(pyEdg,idx+2);
-				ref = (int) PyInt_AS_LONG(oo);
-				
-				Msh->NbrEfr++;
-				AddEdge(Msh,Msh->NbrEfr,is,ref);
-      }
-  }
-	
-	
-	
+		
 	if ( PyList_Check(pyVer) )
   {
 			siz = PyList_Size(pyVer);
