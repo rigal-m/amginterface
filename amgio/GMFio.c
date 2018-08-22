@@ -430,6 +430,7 @@ int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
   	}
 	}
 
+
 	if ( Msh->NbrPri > 0  ) {
   	//--- Write prisms
   	GmfSetKwd(OutMsh, GmfPrisms, Msh->NbrPri);
@@ -437,6 +438,7 @@ int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
   	  for (j=0; j<6; ++j) {
   	    idx[j] = (long long)(Msh->Pri[i][j]);
   	  }
+						
   	  GmfSetLin(OutMsh, GmfPrisms,idx[0],idx[1],idx[2],idx[3],idx[4],idx[5],Msh->Pri[i][6]);  
   	}
 	}

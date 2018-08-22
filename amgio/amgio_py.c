@@ -293,14 +293,87 @@ PyObject *pyQua, PyObject *pyPyr, PyObject *pyPri, PyObject *pySol, PyObject *py
 	       	}
 				}
 				
-				PyObject *oo = PyList_GetItem(pyHex,idx+2);
+				PyObject *oo = PyList_GetItem(pyHex,idx+8);
 				ref = (int) PyInt_AS_LONG(oo);
 				
 				Msh->NbrHex++;
 				AddHexahedron(Msh,Msh->NbrHex,is,ref);
       }
   }
+	
+	if ( PyList_Check(pyQua) )
+  {
+			siz = PyList_Size(pyQua);
+			
+			for (i=0; i<siz/5; i++)
+      {
+				idx = 5*i;
+				
+				for (j=0; j<4; j++) {
+	       	PyObject *oo = PyList_GetItem(pyQua,idx+j);
+	       	if ( PyInt_Check(oo) )
+	       	{
+						is[j] = (int) PyInt_AS_LONG(oo);
+	       	}
+				}
+				
+				PyObject *oo = PyList_GetItem(pyQua,idx+4);
+				ref = (int) PyInt_AS_LONG(oo);
+								
+				Msh->NbrQua++;
+				AddQuadrilateral(Msh,Msh->NbrQua,is,ref);
+      }
+  }
 		
+		
+	if ( PyList_Check(pyPyr) )
+  {
+			siz = PyList_Size(pyPyr);
+			
+			for (i=0; i<siz/6; i++)
+      {
+				idx = 6*i;
+				
+				for (j=0; j<5; j++) {
+	       	PyObject *oo = PyList_GetItem(pyPyr,idx+j);
+	       	if ( PyInt_Check(oo) )
+	       	{
+						is[j] = (int) PyInt_AS_LONG(oo);
+	       	}
+				}
+				
+				PyObject *oo = PyList_GetItem(pyPyr,idx+5);
+				ref = (int) PyInt_AS_LONG(oo);
+				
+				Msh->NbrPyr++;
+				AddPyramid(Msh,Msh->NbrPyr,is,ref);
+      }
+  }
+	
+	if ( PyList_Check(pyPri) )
+  {
+			siz = PyList_Size(pyPri);
+			
+			for (i=0; i<siz/7; i++)
+      {
+				idx = 7*i;
+				
+				for (j=0; j<6; j++) {
+	       	PyObject *oo = PyList_GetItem(pyPri,idx+j);
+	       	if ( PyInt_Check(oo) )
+	       	{
+						is[j] = (int) PyInt_AS_LONG(oo);
+	       	}
+				}
+				
+				PyObject *oo = PyList_GetItem(pyPri,idx+6);
+				ref = (int) PyInt_AS_LONG(oo);
+				
+				Msh->NbrPri++;
+				AddPrism(Msh,Msh->NbrPri,is,ref);
+      }
+  }	
+	
 	if ( PyList_Check(pyVer) )
   {
 			siz = PyList_Size(pyVer);

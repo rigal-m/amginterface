@@ -72,7 +72,7 @@ typedef struct S_Mesh
 	double     *Sol;
 	int         NbrFld;   /* Number of solution fields */
   int        *FldTab;   /* Type of each field (scalar, vector, etc.) as defined by libmesh6*/
-	char       SolTag[100][256];
+	char        SolTag[100][256];
 	
 	int Dim;
 	
