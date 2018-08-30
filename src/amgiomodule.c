@@ -21,7 +21,7 @@ jmp_buf ex_buf__;
 static PyObject *
 pyamg_ConvertSU2toLibmeshb(PyObject *self, PyObject *args, PyObject *kwargs)
 {
-    static char *kwlist[] = {"su2_mesh", "output", "su2_sol", NULL};
+    static char *kwlist[] = {"su2_mesh", "libmeshb_mesh", "su2_sol", NULL};
     char *SU2_mesh = NULL;
     char *SU2_sol = NULL;
     char *output = NULL;
@@ -40,7 +40,7 @@ pyamg_ConvertSU2toLibmeshb(PyObject *self, PyObject *args, PyObject *kwargs)
 static PyObject *
 pyamg_ConvertLibmeshbtoSU2(PyObject *self, PyObject *args, PyObject *kwargs)
 {
-    static char *kwlist[] = {"inria_mesh", "output", "inria_sol", NULL};
+    static char *kwlist[] = {"libmeshb_mesh", "su2_mesh", "libmeshb_sol", NULL};
     char *inria_mesh = NULL;
     char *inria_sol = NULL;
     char *output = NULL;
@@ -77,7 +77,7 @@ pyamg_SplitSolution(PyObject *self, PyObject *args, PyObject *kwargs)
 
 
 static PyObject *
-pyamg_ReadMesh__(PyObject *self, PyObject *args, PyObject *kwargs)
+pyamg_ReadMeshToLists(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = {
 	"mesh_name", "sol_name", "vertices", "triangles", "tetrahedra", "edges",
@@ -110,7 +110,7 @@ pyamg_ReadMesh__(PyObject *self, PyObject *args, PyObject *kwargs)
 
 
 static PyObject *
-pyamg_WriteMesh__(PyObject *self, PyObject *args, PyObject *kwargs)
+pyamg_WriteMeshFromLists(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = {
 	"mesh_name", "sol_name", "vertices", "triangles", "tetrahedra", "edges",
@@ -143,7 +143,7 @@ pyamg_WriteMesh__(PyObject *self, PyObject *args, PyObject *kwargs)
 
 
 static PyObject *
-pyamg_WriteSolution__(PyObject *self, PyObject *args, PyObject *kwargs)
+pyamg_WriteSolutionFromLists(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = {
 	"sol_name", "vertices", "sol", "sol_header", "nb_vertices", "dim", NULL
@@ -332,54 +332,96 @@ pyamg_SU2_GetDim(PyObject *self, PyObject *args)
 }
 
 
-
 static const char help_ConvertSU2toLibmeshb[]="\
-Convert an SU2 python mesh file into a libmeshb one";
+Convert an SU2 python mesh file into a libmeshb one and write it in a file\n\
+USAGE:\n\
+\tamgio.su2_to_libmeshb(su2_mesh, libmeshb_mesh[, su2_sol=sol])";
 
 static const char help_ConvertLibmeshbtoSU2[]="\
-Convert a libmeshb python mesh file into a SU2 one";
+Convert a libmeshb python mesh file into a SU2 one\n\
+USAGE:\n\
+\tamgio.libmeshb_to_su2(libmeshb_mesh, su2_mesh[, libmeshb_sol=sol])";
 
 static const char help_SplitSolution[]="\
-Split a given solution";
+Split a given solution\n\
+USAGE:\n\
+\tamgio.split_solution(solution, dim, prefix, adap_sensor)";
 
-static const char help_ReadMesh__[]="\
-Read a .mesh(b) file and store the elements into lists given as arguments";
+static const char help_ReadMeshToLists[]="\
+Read a .mesh(b) file and store the elements into lists given as arguments\n\
+USAGE:\n\
+\tamgio.read_mesh_to_lists(\n\
+\t\tmesh_name, sol_name, vertices, triangles, tetrahedra,\n\
+\t\tedges, sol, sol_ref, markers\n\
+\t)";
 
-static const char help_WriteMesh__[]="\
-Write a set of lists defining a mesh into a (.mesh(b) | SU2) file";
+static const char help_WriteMeshFromLists[]="\
+Write a set of lists defining a mesh into a (.mesh(b) | SU2) file\n\
+USAGE:\n\
+\tamgio.write_mesh_from_lists(\n\
+\t\tmesh_name, sol_name, vertices, triangles, tetrahedra,\n\
+\t\tedges, sol, markers, dim\n\
+\t)";
 
-static const char help_WriteSolution__[]="\
-Write a set of lists defining a solution into a (.sol(b) | SU2) file";
+static const char help_WriteSolutionFromLists[]="\
+Write a set of lists defining a solution into a (.sol(b) | SU2) file\n\
+\tamgio.write_sol_from_lists(\n\
+\t\tsol_name, vertices, sol, sol_header, nb_vertices, dim\n\
+\t)";
 
 static const char help_GetMeshToDict[]="\
-Return a dictionary representation of the given mesh (and optional solution)";
+Return a dictionary representation of the given mesh file \
+(and optional solution)\n\
+USAGE:\n\
+\tmsh_dict = amgio.get_mesh_to_dict(mesh_name[, sol_name=sol])";
 
 static const char help_WriteMeshFromDict[]="\
-Write a dictionary representation of a mesh (and optional solution) to file";
+Write a dictionary representation of a mesh (and optional solution) to file\n\
+USAGE:\n\
+\tamgio.write_mesh_from_dict(mesh, mesh_name[, sol_name=sol])";
 
 static const char help_WriteSolFromDict[]="\
-Write a dictionary representation of a solution to file";
+Write a dictionary representation of a solution to file\n\
+USAGE:\n\
+\tamgio.write_sol_from_dict(sol, sol_name)";
 
 static const char help_CreateSensor[]="\
-Create a sensor given a solution dict";
+Create a sensor given a solution dict\n\
+USAGE:\n\
+\tsensor_wrap_dict = amgio.create_sensor(sol, sensor)";
 
 static const char help_GetMeshSizes[]="\
-Get the mesh sizes for each AMG iteration";
+Get the mesh sizes for each AMG iteration from an SU2 config dictionary\n\
+USAGE:\n\
+\tsize_list = amgio.get_mesh_sizes(config_dict)";
 
 static const char help_GetSubIterations[]="\
-Get the number of subiterations required for each AMG iteration";
+Get the number of subiterations required for each AMG iteration from an \
+SU2 config dictionary\n\
+USAGE:\n\
+\tsub_iter_list = amgio.get_sub_iterations(config_dict)";
 
 static const char help_GetResidualReduction[]="\
-Get the number of residual reductions required for each AMG iteration";
+Get the number of residual reductions required for each AMG iteration \
+from an SU2 config dictionary\n\
+USAGE:\n\
+\tresidual_reduction_list = amgio.get_residual_reduction(config_dict)";
 
 static const char help_GetExtIter[]="\
-Get the number of exterior iterations required for each AMG iteration";
+Get the number of exterior iterations required for each AMG iteration \
+from an SU2 config dictionary\n\
+USAGE:\n\
+\text_iter_list = amgio.get_ext_iter(config_dict)";
 
 static const char help_PrintAdapOptions[]="\
-Print options regarding the adaptative process";
+Print options regarding the adaptative process\n\
+USAGE:\n\
+\tamgio.print_adap_options(config_dict, keword_list)";
 
 static const char help_SU2_GetDim[]="\
-Retrieve the dimension from an SU2 mesh file";
+Retrieve the dimension from an SU2 mesh file\n\
+USAGE:\n\
+\tdim = amgio.su2_get_dim(file_name)";
 
 
 static const char help_amgio[]={"\
@@ -398,14 +440,14 @@ static PyMethodDef amgioMethods[] = {
     {"split_solution", (PyCFunction)pyamg_SplitSolution,
      METH_VARARGS | METH_KEYWORDS, help_SplitSolution},
     
-    {"read_mesh_to_lists", (PyCFunction)pyamg_ReadMesh__,
-     METH_VARARGS | METH_KEYWORDS, help_ReadMesh__},
+    {"read_mesh_to_lists", (PyCFunction)pyamg_ReadMeshToLists,
+     METH_VARARGS | METH_KEYWORDS, help_ReadMeshToLists},
     
-    {"write_mesh_from_lists", (PyCFunction)pyamg_WriteMesh__,
-     METH_VARARGS | METH_KEYWORDS, help_WriteMesh__},
+    {"write_mesh_from_lists", (PyCFunction)pyamg_WriteMeshFromLists,
+     METH_VARARGS | METH_KEYWORDS, help_WriteMeshFromLists},
     
-    {"write_sol_from_lists", (PyCFunction)pyamg_WriteSolution__,
-     METH_VARARGS | METH_KEYWORDS, help_WriteSolution__},
+    {"write_sol_from_lists", (PyCFunction)pyamg_WriteSolutionFromLists,
+     METH_VARARGS | METH_KEYWORDS, help_WriteSolutionFromLists},
     
     {"get_mesh_to_dict", (PyCFunction)pyamg_GetMeshToDict,
      METH_VARARGS | METH_KEYWORDS, help_GetMeshToDict},
