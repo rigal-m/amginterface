@@ -9,11 +9,11 @@ solutions between the following formats:
 
 The goal is to facilitate the interaction between the Python Adaptative Mesh
 Generation program [pyamg](https://pyamg.saclay.inria.fr/) and
-[SU2](https://su2code.github.io/).
+[SU2](https://su2code.github.io/) solver.
 
 ## Building the wheel archive
 
-To generate the .whl archive, please follow the following steps:
+To generate the .whl archive, please follow the steps below:
 ```bash
 ./compile.sh (linux|mac) -py=(2|3)
 (sudo -H pip | pip3) install --upgrade --force-reinstall <PATH_TO_WHEEL_ARCHIVE>
