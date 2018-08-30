@@ -16,14 +16,14 @@ Generation program [pyamg](https://pyamg.saclay.inria.fr/) and
 To generate the .whl archive, please follow the following steps:
 ```bash
 ./compile.sh (linux|mac) -py=(2|3)
-sudo -H pip install --upgrade --force-reinstall <PATH_TO_WHEEL_ARCHIVE>
+(sudo -H pip | pip3) install --upgrade --force-reinstall <PATH_TO_WHEEL_ARCHIVE>
 ```
 Currently, the only supported architecture is linux for Python 2.
 The path to the wheel archive is printed at the end of the compilation process.
 
 To uninstall this module and clean the directory, type:
 ```bash
-sudo -H pip uninstall amgio
+(sudo -H pip | pip3) uninstall amgio
 ./compile.sh clean
 ```
 
