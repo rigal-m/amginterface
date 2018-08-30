@@ -5,16 +5,10 @@
 
 #include <libmeshb7.h>
 
-//--- feflo.a
-/* #include <fefloa_include.h> */
 #include "amgio/amgio.h"
 #include "amgio/amgio_py.h"
 #include "amgio/amgio_tools.h"
 #include "tools.h"
-
-
-/* simulate exception */
-jmp_buf ex_buf__;
 
 
 
@@ -81,7 +75,8 @@ pyamg_ReadMeshToLists(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = {
 	"mesh_name", "sol_name", "vertices", "triangles", "tetrahedra", "edges",
-	"sol", "sol_ref", "markers", NULL
+	"hexahedra", "quadrilaterals", "pyramids", "prisms", "sol", "sol_ref",
+	"markers", NULL
     };
 
     char *MshNam        = NULL;
@@ -91,18 +86,22 @@ pyamg_ReadMeshToLists(PyObject *self, PyObject *args, PyObject *kwargs)
     PyObject *pyTri     = NULL;
     PyObject *pyTet     = NULL;
     PyObject *pyEdg     = NULL;
+    PyObject *pyHex     = NULL;
+    PyObject *pyQua     = NULL;
+    PyObject *pyPyr     = NULL;
+    PyObject *pyPri     = NULL;
     PyObject *pySol     = NULL;
     PyObject *pySolRef  = NULL;
     PyObject *pyMarkers = NULL;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ssOOOOOOO", kwlist,
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ssOOOOOOOOOOO", kwlist,
 				     &MshNam, &SolNam, &pyVer, &pyTri,
-				     &pyTet, &pyEdg, &pySol, &pySolRef,
-				     &pyMarkers))
+				     &pyTet, &pyEdg, &pyHex, &pyQua, &pyPyr,
+				     &pyPri, &pySol, &pySolRef, &pyMarkers))
 	return NULL;
 
-    py_ReadMesh__ (MshNam, SolNam, pyVer, pyTri, pyTet, pyEdg, pySol, pySolRef,
-		   pyMarkers);
+    py_ReadMesh__ (MshNam, SolNam, pyVer, pyTri, pyTet, pyEdg, pyHex, pyQua,
+		   pyPyr, pyPri, pySol, pySolRef, pyMarkers);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -114,7 +113,8 @@ pyamg_WriteMeshFromLists(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = {
 	"mesh_name", "sol_name", "vertices", "triangles", "tetrahedra", "edges",
-	"sol", "markers", "dim", NULL
+	"hexahedra", "quadrilaterals", "pyramids", "prisms", "sol", "markers",
+	"dim", NULL
     };
 
     char *MshNam        = NULL;
@@ -124,18 +124,23 @@ pyamg_WriteMeshFromLists(PyObject *self, PyObject *args, PyObject *kwargs)
     PyObject *pyTri     = NULL;
     PyObject *pyTet     = NULL;
     PyObject *pyEdg     = NULL;
+    PyObject *pyHex     = NULL;
+    PyObject *pyQua     = NULL;
+    PyObject *pyPyr     = NULL;
+    PyObject *pyPri     = NULL;
     PyObject *pySol     = NULL;
     PyObject *pyMarkers = NULL;
 
     int Dim;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ssOOOOOOi", kwlist,
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ssOOOOOOOOOOi", kwlist,
 				     &MshNam, &SolNam, &pyVer, &pyTri,
-				     &pyTet, &pyEdg, &pySol, &pyMarkers, &Dim))
+				     &pyTet, &pyEdg, &pyHex, &pyQua, &pyPyr,
+				     &pyPri, &pySol, &pyMarkers, &Dim))
 	return NULL;
 
-    py_WriteMesh__ (MshNam, SolNam, pyVer, pyTri, pyTet, pyEdg, pySol,
-		    pyMarkers, Dim);
+    py_WriteMesh__ (MshNam, SolNam, pyVer, pyTri, pyTet, pyEdg, pyHex, pyQua,
+		    pyPyr, pyPri, pySol, pyMarkers, Dim);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -352,7 +357,8 @@ Read a .mesh(b) file and store the elements into lists given as arguments\n\
 USAGE:\n\
 \tamgio.read_mesh_to_lists(\n\
 \t\tmesh_name, sol_name, vertices, triangles, tetrahedra,\n\
-\t\tedges, sol, sol_ref, markers\n\
+\t\tedges, hexahedra, quadrilaterals, pyramids, prisms,\n\
+\t\tsol, sol_ref, markers\n\
 \t)";
 
 static const char help_WriteMeshFromLists[]="\
@@ -360,11 +366,13 @@ Write a set of lists defining a mesh into a (.mesh(b) | SU2) file\n\
 USAGE:\n\
 \tamgio.write_mesh_from_lists(\n\
 \t\tmesh_name, sol_name, vertices, triangles, tetrahedra,\n\
-\t\tedges, sol, markers, dim\n\
+\t\tedges, hexahedra, quadrilaterals, pyramids, prisms,\n\
+\t\tsol, markers, dim\n\
 \t)";
 
 static const char help_WriteSolutionFromLists[]="\
 Write a set of lists defining a solution into a (.sol(b) | SU2) file\n\
+USAGE:\n\
 \tamgio.write_sol_from_lists(\n\
 \t\tsol_name, vertices, sol, sol_header, nb_vertices, dim\n\
 \t)";
