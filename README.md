@@ -7,6 +7,10 @@ solutions between the following formats:
 * libmeshb
 * SU2
 
+The goal is to facilitate the interaction between the Python Adaptative Mesh
+Generation program [pyamg](https://pyamg.saclay.inria.fr/) and
+[SU2](https://su2code.github.io/).
+
 ## Building the wheel archive
 
 To generate the .whl archive, please follow the following steps:
@@ -14,8 +18,14 @@ To generate the .whl archive, please follow the following steps:
 ./compile.sh (linux|mac) -py=(2|3)
 sudo -H pip install --upgrade --force-reinstall <PATH_TO_WHEEL_ARCHIVE>
 ```
-Currently, the only supported architecture is linux for Python 3.
+Currently, the only supported architecture is linux for Python 2.
 The path to the wheel archive is printed at the end of the compilation process.
+
+To uninstall this module and clean the directory, type:
+```bash
+sudo -H pip uninstall amgio
+./compile.sh clean
+```
 
 ## Module userguide
 
