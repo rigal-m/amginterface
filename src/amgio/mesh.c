@@ -549,99 +549,99 @@ void switchQuaIdx(int *idx, int *swi)
 void switchTetIdx(int *idx, int *swi)
 {
   
-  if ( idx[1] < idx[0] ) {  
+  if ( idx[1] < idx[0] ) {
     
-    if ( idx[2] < idx[1] ) {   
-      if ( idx[3] < idx[2] ) {  
+    if ( idx[2] < idx[1] ) {
+      if ( idx[3] < idx[2] ) {
         swi[0] = idx[3];   swi[1] = idx[2];
         swi[2] = idx[1];   swi[3] = idx[0];
       }
-      else if ( idx[0] < idx[3] ){  
+      else if ( idx[0] < idx[3] ){
         swi[0] = idx[2];   swi[1] = idx[0];
         swi[2] = idx[1];   swi[3] = idx[3];
       }
-      else { 
+      else {
         swi[0] = idx[2];   swi[1] = idx[1];
         swi[2] = idx[3];   swi[3] = idx[0];
       }
-    }   
-    else if ( idx[0] < idx[2] ) {   
-      if ( idx[3] < idx[1] ) {  
+    }
+    else if ( idx[0] < idx[2] ) {
+      if ( idx[3] < idx[1] ) {
         swi[0] = idx[3];   swi[1] = idx[1];
         swi[2] = idx[0];   swi[3] = idx[2];
       }
-      else if ( idx[2] < idx[3] ){ 
+      else if ( idx[2] < idx[3] ){
         swi[0] = idx[1];   swi[1] = idx[2];
         swi[2] = idx[0];   swi[3] = idx[3];
       }
-      else {  
+      else {
         swi[0] = idx[1];   swi[1] = idx[0];
         swi[2] = idx[3];   swi[3] = idx[2];
       }
     }
     
-    else { 
-      if ( idx[3] < idx[1] ) {  
+    else {
+      if ( idx[3] < idx[1] ) {
         swi[0] = idx[3];   swi[1] = idx[2];
         swi[2] = idx[1];   swi[3] = idx[0];
       }
-      else if ( idx[0] < idx[3] ){  
+      else if ( idx[0] < idx[3] ){
         swi[0] = idx[1];   swi[1] = idx[2];
         swi[2] = idx[0];   swi[3] = idx[3];
       }
-      else {  
+      else {
         swi[0] = idx[1];   swi[1] = idx[3];
         swi[2] = idx[2];   swi[3] = idx[0];
       }
-    }   
+    }
 
   }
   
-  else {   
+  else {
     
-    if ( idx[2] < idx[0] ) {  
-      if ( idx[3] < idx[2] ) { 
+    if ( idx[2] < idx[0] ) {
+      if ( idx[3] < idx[2] ) {
         swi[0] = idx[3];   swi[1] = idx[0];
         swi[2] = idx[2];   swi[3] = idx[1];
       }
-      else if ( idx[1] < idx[3] ){  
+      else if ( idx[1] < idx[3] ){
         swi[0] = idx[2];   swi[1] = idx[0];
         swi[2] = idx[1];   swi[3] = idx[3];
       }
-      else { 
+      else {
         swi[0] = idx[2];   swi[1] = idx[3];
         swi[2] = idx[0];   swi[3] = idx[1];
       }
-    }   
-    else if ( idx[1] < idx[2] ) {   
-      if ( idx[3] < idx[0] ) { 
+    }
+    else if ( idx[1] < idx[2] ) {
+      if ( idx[3] < idx[0] ) {
         swi[0] = idx[3];   swi[1] = idx[1];
         swi[2] = idx[0];   swi[3] = idx[2];
       }
-      else if ( idx[2] < idx[3] ){  
+      else if ( idx[2] < idx[3] ){
         swi[0] = idx[0];   swi[1] = idx[1];
         swi[2] = idx[2];   swi[3] = idx[3];
       }
-      else {  
+      else {
         swi[0] = idx[0];   swi[1] = idx[3];
         swi[2] = idx[1];   swi[3] = idx[2];
       }
     }
     
-    else {  
-      if ( idx[3] < idx[0] ) { 
+    else {
+      if ( idx[3] < idx[0] ) {
         swi[0] = idx[3];   swi[1] = idx[0];
         swi[2] = idx[2];   swi[3] = idx[1];
       }
-      else if ( idx[1] < idx[3] ){ 
+      else if ( idx[1] < idx[3] ){
         swi[0] = idx[0];   swi[1] = idx[1];
         swi[2] = idx[2];   swi[3] = idx[3];
       }
-      else { 
+      else {
         swi[0] = idx[0];   swi[1] = idx[2];
         swi[2] = idx[3];   swi[3] = idx[1];
       }
-    }   
+    }
     
   }
 
@@ -653,26 +653,26 @@ void switchTetIdx(int *idx, int *swi)
 
 void switchTriIdx(int *idx, int *swi)
 {
-  if ( idx[1] < idx[0] ) { 
-    if ( idx[2] < idx[1] ) {  
+  if ( idx[1] < idx[0] ) {
+    if ( idx[2] < idx[1] ) {
       swi[0] = idx[2];
       swi[1] = idx[0];
       swi[2] = idx[1];
-    }   
-    else { 
+    }
+    else {
       swi[0] = idx[1];
       swi[1] = idx[2];
       swi[2] = idx[0];
-    }   
+    }
   }
-  
+
   else {
-    if ( idx[2] < idx[0] ) {  
+    if ( idx[2] < idx[0] ) {
         swi[0] = idx[2];
         swi[1] = idx[0];
         swi[2] = idx[1];
     }
-    else {  
+    else {
       swi[0] = idx[0];
       swi[1] = idx[1];
       swi[2] = idx[2];

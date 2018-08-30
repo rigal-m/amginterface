@@ -1,3 +1,6 @@
+#ifndef AMGIO_HEADER__
+#define AMGIO_HEADER__
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -7,12 +10,18 @@
 #include <ctype.h>
 #include <setjmp.h>
 
+#ifndef max
 #define max(a,b) (a>=b?a:b)
-#define min(a,b) (a<=b?a:b)
+#endif
 
-#include "libmesh6.h"
-#include "mesh.h"
-#include "option.h"
+#ifndef min
+#define min(a,b) (a<=b?a:b)
+#endif
+
+#include <libmeshb7.h>
+#include "../types.h"
+// #include "mesh.h"
+// #include "option.h"
 
 #define PI_NUMBER 3.14159265359
 
@@ -71,4 +80,9 @@ int  Str2Lower(char *buff);
 void StrRemoveChars (char* str, char c);
 
 //--- convert.c
-int  SplitSolution (Mesh *Msh, char *prefix, char *adap_sensor);
+int ConvertGMFtoSU2Sol (Options *mshopt);
+int ConvertSU2SolToGMF (Options *mshopt);
+int SplitSolution (Mesh *Msh, char *prefix, char *adap_sensor);
+
+
+#endif // AMGIO HEADER

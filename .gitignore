@@ -62,3 +62,6 @@ TestData
 
 pyamg-inria.macosx
 *_wrap.c
+
+build
+*.delete

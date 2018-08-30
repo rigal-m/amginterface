@@ -343,188 +343,189 @@ int LoadGMFSolution(char *SolNam, Mesh *Msh)
 //}
 //
 
+
 int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
 {
-  int       OutMsh,FilVer,i, j;
-  int       iVer,iTri,iEfr,iTet,iQua; 
-  long long idx[6];
-  char      OutFil[512];
-  
-  int Dim = Msh->Dim;
-	int NbrVer  = Msh->NbrVer;
-	int NbrTri  = Msh->NbrTri;
-	int NbrEfr  = Msh->NbrEfr;
-	int NbrQua  = Msh->NbrQua;
-	double3*Ver = Msh->Ver;
-	int4*Tri    = Msh->Tri;
-	int3*Efr    = Msh->Efr;
-	int5*Tet    = Msh->Tet;
-	int5*Qua    = Msh->Qua;
+    int64_t   OutMsh; // Can cause segfault if OutMesh declared as int
+    int       FilVer, i, j;
+    int       iVer, iTri, iEfr, iTet, iQua; 
+    long long idx[6];
+    char      OutFil[512];
+
+    int Dim = Msh->Dim;
+    int NbrVer  = Msh->NbrVer;
+    int NbrTri  = Msh->NbrTri;
+    int NbrEfr  = Msh->NbrEfr;
+    int NbrQua  = Msh->NbrQua;
+    double3*Ver = Msh->Ver;
+    int4*Tri    = Msh->Tri;
+    int3*Efr    = Msh->Efr;
+    int5*Tet    = Msh->Tet;
+    int5*Qua    = Msh->Qua;
 	
 	
-  //--- Define file name extension 
-  strcpy(OutFil,nam);
+    //--- Define file name extension
+    strcpy(OutFil,nam);
 
-  if ( OptBin == 1 )
-    strcat(OutFil,".meshb");
-  else
-    strcat(OutFil,".mesh");
- 
-  FilVer = GmfDouble;
-  
-  //--- Open file
-  if ( !(OutMsh = GmfOpenMesh(OutFil,GmfWrite,FilVer,Dim)) ) {
-    printf("  ## ERROR: Cannot open mesh file %s ! \n",OutFil);
-		return 0;
-  }
-  //printf("  %%%% %s OPENED (WRITE)\n",OutFil);
-  
-  //--- Write vertices
-  GmfSetKwd(OutMsh, GmfVertices, NbrVer);
+    if ( OptBin == 1 )
+	strcat(OutFil,".meshb");
+    else
+	strcat(OutFil,".mesh");
 
-	if ( Msh->Dim == 2 ) {
+    FilVer = GmfDouble;
+
+    //--- Open file
+    if ( 0 > (OutMsh = GmfOpenMesh(OutFil, GmfWrite, FilVer, Dim)) ) {
+	printf("  ## ERROR: Cannot open mesh file %s ! \n",OutFil);
+	return 0;
+    }
+    //printf("  %%%% %s OPENED (WRITE)\n",OutFil);
+
+    //--- Write vertices
+    GmfSetKwd(OutMsh, GmfVertices, NbrVer);
+
+    if ( Msh->Dim == 2 ) {
   	for (iVer=1; iVer<=NbrVer; ++iVer) {
-    	GmfSetLin(OutMsh, GmfVertices,Ver[iVer][0],Ver[iVer][1],0);  
+	    GmfSetLin(OutMsh, GmfVertices,Ver[iVer][0],Ver[iVer][1],0);  
   	}
-  }
-	else {
+    }
+    else {
 		
 		
-		for (iVer=1; iVer<=NbrVer; ++iVer) {
-    	GmfSetLin(OutMsh, GmfVertices,Ver[iVer][0],Ver[iVer][1],Ver[iVer][2],0);  
+	for (iVer=1; iVer<=NbrVer; ++iVer) {
+	    GmfSetLin(OutMsh, GmfVertices,Ver[iVer][0],Ver[iVer][1],Ver[iVer][2],0);  
   	}
-	}
+    }
 	
-	
-	if ( Msh->Tri > 0 ) {
+    if ( Msh->Tri > 0 ) {
   	//--- Write triangles
   	GmfSetKwd(OutMsh, GmfTriangles, NbrTri);
   	for (iTri=1; iTri<=NbrTri; ++iTri) {
-  	  for (i=0; i<3; ++i) {
-  	    idx[i] = (long long)(Tri[iTri][i]);
-  	  }
-  	  GmfSetLin(OutMsh, GmfTriangles,idx[0],idx[1],idx[2],Tri[iTri][3]);  
+	    for (i=0; i<3; ++i) {
+		idx[i] = (long long)(Tri[iTri][i]);
+	    }
+	    GmfSetLin(OutMsh, GmfTriangles,idx[0],idx[1],idx[2],Tri[iTri][3]);  
   	}
-	}
+    }
 	
-	if ( Msh->Qua > 0 ) {
+    if ( Msh->Qua > 0 ) {
   	//--- Write quads
   	GmfSetKwd(OutMsh, GmfQuadrilaterals, NbrQua);
   	for (iQua=1; iQua<=NbrQua; ++iQua) {
-  	  for (i=0; i<4; ++i) {
-  	    idx[i] = (long long)(Qua[iQua][i]);
-  	  }
-  	  GmfSetLin(OutMsh, GmfQuadrilaterals,idx[0],idx[1],idx[2],idx[3],Qua[iQua][4]);  
+	    for (i=0; i<4; ++i) {
+		idx[i] = (long long)(Qua[iQua][i]);
+	    }
+	    GmfSetLin(OutMsh, GmfQuadrilaterals,idx[0],idx[1],idx[2],idx[3],Qua[iQua][4]);  
   	}
-	}
+    }
 
 
-	if ( Msh->NbrTet > 0 ) {
+    if ( Msh->NbrTet > 0 ) {
   	//--- Write tetrahedra
   	GmfSetKwd(OutMsh, GmfTetrahedra, Msh->NbrTet);
   	for (iTet=1; iTet<=Msh->NbrTet; ++iTet) {
-  	  for (i=0; i<4; ++i) {
-  	    idx[i] = (long long)(Tet[iTet][i]);
-  	  }
-  	  GmfSetLin(OutMsh, GmfTetrahedra,idx[0],idx[1],idx[2],idx[3],Tet[iTet][4]);  
+	    for (i=0; i<4; ++i) {
+		idx[i] = (long long)(Tet[iTet][i]);
+	    }
+	    GmfSetLin(OutMsh, GmfTetrahedra,idx[0],idx[1],idx[2],idx[3],Tet[iTet][4]);  
   	}
-	}
+    }
 
 
-	if ( Msh->NbrPri > 0  ) {
+    if ( Msh->NbrPri > 0  ) {
   	//--- Write prisms
   	GmfSetKwd(OutMsh, GmfPrisms, Msh->NbrPri);
   	for (i=1; i<=Msh->NbrPri; ++i) {
-  	  for (j=0; j<6; ++j) {
-  	    idx[j] = (long long)(Msh->Pri[i][j]);
-  	  }
+	    for (j=0; j<6; ++j) {
+		idx[j] = (long long)(Msh->Pri[i][j]);
+	    }
 						
-  	  GmfSetLin(OutMsh, GmfPrisms,idx[0],idx[1],idx[2],idx[3],idx[4],idx[5],Msh->Pri[i][6]);  
+	    GmfSetLin(OutMsh, GmfPrisms,idx[0],idx[1],idx[2],idx[3],idx[4],idx[5],Msh->Pri[i][6]);  
   	}
-	}
+    }
 
-	if ( Msh->NbrPyr > 0 ) {
+    if ( Msh->NbrPyr > 0 ) {
   	//--- Write pyr
   	GmfSetKwd(OutMsh, GmfPyramids, Msh->NbrPyr);
   	for (i=1; i<=Msh->NbrPyr; ++i) {
-  	  for (j=0; j<5; ++j) {
-  	    idx[j] = (long long)(Msh->Pyr[i][j]);
-  	  }
-  	  GmfSetLin(OutMsh, GmfPyramids,idx[0],idx[1],idx[2],idx[3],idx[4],Msh->Pyr[i][5]);  
+	    for (j=0; j<5; ++j) {
+		idx[j] = (long long)(Msh->Pyr[i][j]);
+	    }
+	    GmfSetLin(OutMsh, GmfPyramids,idx[0],idx[1],idx[2],idx[3],idx[4],Msh->Pyr[i][5]);  
   	}
-	}	
+    }	
 	
-	if ( Msh->NbrEfr ) {
+    if ( Msh->NbrEfr ) {
   	//--- Write Edges
   	GmfSetKwd(OutMsh, GmfEdges, NbrEfr);
   	for (iEfr=1; iEfr<=NbrEfr; ++iEfr) {
-  	  for (i=0; i<2; ++i) {
-  	    idx[i] = (long long)(Efr[iEfr][i]);
-  	  }
-  	  GmfSetLin(OutMsh, GmfEdges,idx[0],idx[1],Efr[iEfr][2]);  
+	    for (i=0; i<2; ++i) {
+		idx[i] = (long long)(Efr[iEfr][i]);
+	    }
+	    GmfSetLin(OutMsh, GmfEdges,idx[0],idx[1],Efr[iEfr][2]);  
   	}
-  }
+    }
 
-  //--- close mesh file
-  if ( !GmfCloseMesh(OutMsh) ) {
-    printf("  ## ERROR: Cannot close mesh file %s ! \n",OutFil);
-		return 0;
-  }
+    //--- close mesh file
+    if ( !GmfCloseMesh(OutMsh) ) {
+	printf("  ## ERROR: Cannot close mesh file %s ! \n",OutFil);
+	return 0;
+    }
   
-  return 1;
+    return 1;
 }
 
 
 
 int WriteGMFSolution(char *SolNam, double *Sol, int SolSiz, int NbrVer, int Dim, int NbrFld, int* FldTab)
 {
-  int       OutSol, iVer;
-	double   *dbl=NULL;
+    int       OutSol, iVer;
+    double   *dbl=NULL;
 	
-	if ( !Sol ) {
-		printf("  ## ERROR WriteGMFSolution : Sol not allocated.\n");
-		return 0;	
-	}
+    if ( !Sol ) {
+	printf("  ## ERROR WriteGMFSolution : Sol not allocated.\n");
+	return 0;	
+    }
 	
-	if ( SolSiz < 1 ) {
-		printf("  ## ERROR WriteGMFSolution : SolSiz < 1.\n");
-		return 0;
-	}
+    if ( SolSiz < 1 ) {
+	printf("  ## ERROR WriteGMFSolution : SolSiz < 1.\n");
+	return 0;
+    }
 	
-	//--- Open solution file
-	if ( !(OutSol = GmfOpenMesh(SolNam, GmfWrite, GmfDouble, Dim)) ) {
-    fprintf(stderr,"  ## ERROR: Cannot open solution file %s ! \n",SolNam);
-    exit(1);
-  }
-  //printf("  %%%% %s OPENED (WRITE)\n",SolNam);
+    //--- Open solution file
+    if ( !(OutSol = GmfOpenMesh(SolNam, GmfWrite, GmfDouble, Dim)) ) {
+	fprintf(stderr,"  ## ERROR: Cannot open solution file %s ! \n",SolNam);
+	exit(1);
+    }
+    //printf("  %%%% %s OPENED (WRITE)\n",SolNam);
 
-  GmfSetKwd(OutSol, GmfSolAtVertices, NbrVer, NbrFld, FldTab);
+    GmfSetKwd(OutSol, GmfSolAtVertices, NbrVer, NbrFld, FldTab);
 	
-  for (iVer=1; iVer<=NbrVer; ++iVer) {
-		dbl = &Sol[iVer*SolSiz];
-    GmfSetLin(OutSol, GmfSolAtVertices, dbl);
-  }
+    for (iVer=1; iVer<=NbrVer; ++iVer) {
+	dbl = &Sol[iVer*SolSiz];
+	GmfSetLin(OutSol, GmfSolAtVertices, dbl);
+    }
 		
-	if ( !GmfCloseMesh(OutSol) ) {
-	  printf("  ## ERROR: Cannot close solution file %s ! \n",SolNam);
-		return 0;
-	}
+    if ( !GmfCloseMesh(OutSol) ) {
+	printf("  ## ERROR: Cannot close solution file %s ! \n",SolNam);
+	return 0;
+    }
 	
-	return 1;
+    return 1;
 }
 
 
 /*
-	Interface to function WriteGMFSolution()
+  Interface to function WriteGMFSolution()
 */
 int WriteGMFSolutionItf(char *SolNam, Mesh *Msh)
 {
-	double *Sol      = Msh->Sol;
-	int     SolSiz   = Msh->SolSiz;
-	int     NbrVer   = Msh->NbrVer;
-	int     Dim      = Msh->Dim; 
-	int     NbrFld   = Msh->NbrFld; 
-	int    *FldTab   = Msh->FldTab; 
+    double *Sol      = Msh->Sol;
+    int     SolSiz   = Msh->SolSiz;
+    int     NbrVer   = Msh->NbrVer;
+    int     Dim      = Msh->Dim; 
+    int     NbrFld   = Msh->NbrFld; 
+    int    *FldTab   = Msh->FldTab; 
 	
-	return WriteGMFSolution(SolNam, Sol, SolSiz, NbrVer, Dim, NbrFld, FldTab);
+    return WriteGMFSolution(SolNam, Sol, SolSiz, NbrVer, Dim, NbrFld, FldTab);
 }
