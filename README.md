@@ -9,7 +9,7 @@ solutions between the following formats:
 
 The goal is to facilitate the interaction between the Python Adaptative Mesh
 Generation program [pyamg](https://pyamg.saclay.inria.fr/) and
-[SU2](https://su2code.github.io/) solver.
+the [SU2](https://su2code.github.io/) solver.
 
 ## Building the wheel archive
 
@@ -34,7 +34,7 @@ The amgio module can be imported as follow:
 import amgio
 ```
 
-In the section we give an overview of the different methods offered by the
+In this section we give an overview of the different methods offered by the
 amgio module:
 
 - `su2_to_libmeshb(su2_mesh, libmeshb_mesh[, su2_sol=sol])`  
