@@ -204,7 +204,8 @@ pyamg_WriteMeshFromDict(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &Mesh, &MeshNam, &SolNam))
 	return NULL;
 
-    if (!PyDict_Check(Mesh)) return NULL;
+    if (!PyDict_Check(Mesh) || !PyString_Check(MeshNam)) return NULL;
+    if (NULL != SolNam && !PyString_Check(SolNam)) return NULL;
 
     if(!py_WriteMeshFromDict__ (Mesh, MeshNam, SolNam)) return NULL;
 
