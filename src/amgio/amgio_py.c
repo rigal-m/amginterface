@@ -10,6 +10,7 @@
 
 int py_ConvertSU2toLibmeshb( char *MshNam, char *SolNam, char *OutNam ) 
 {
+    char error_msg[BUFSIZE];
     Options *mshopt = AllocOptions();
 
     strcpy(mshopt->OutNam,OutNam);
@@ -19,16 +20,21 @@ int py_ConvertSU2toLibmeshb( char *MshNam, char *SolNam, char *OutNam )
     mshopt->clean = 0; // remove unconnected vertices
 
     if ( !CheckOptions(mshopt) ) {
-	return 0;
+	sprintf(error_msg, "py_ConvertSU2toLibmeshb: mesh options incorrect\n");
+	handle_err_(PyExc_RuntimeError, error_msg, err);
     }
 
     return ConvertSU2SolToGMF (mshopt);
+
+
+ err:
+    return 0;
 }
 
 
 int py_ConvertLibmeshbtoSU2( char *MshNam, char *SolNam, char *OutNam ) 
 {
-
+    char error_msg[BUFSIZE];
     Options *mshopt = AllocOptions();
 	
     strcpy(mshopt->OutNam,OutNam);
@@ -38,35 +44,38 @@ int py_ConvertLibmeshbtoSU2( char *MshNam, char *SolNam, char *OutNam )
     mshopt->clean = 0; // remove unconnected vertices
 	
     if ( !CheckOptions(mshopt) ) {
-	return 0;
+	sprintf(error_msg, "py_ConvertLibmeshbtoSU2: mesh options incorrect\n");
+	handle_err_(PyExc_RuntimeError, error_msg, err);
     }
 	
     return ConvertGMFtoSU2Sol (mshopt);
 	
 	
     return 1;
+
+
+ err:
+    return 0;
 }
 
 
 int py_SplitSolution(char *SolNam, int dim, char *prefix, char *adap_sensor)
 {
-	
     int SizMsh[GmfMaxSizMsh+1];
     memset(SizMsh,0,sizeof(int)*(GmfMaxSizMsh+1));
-	
+
     Mesh *Msh = AllocMesh(SizMsh);
-	
+
     Msh->NbrVer = GetSU2SolSize(SolNam);
-	
+
     LoadSU2Solution(SolNam, Msh);
-	
+
     Msh->Dim = dim;
     SplitSolution(Msh, prefix, adap_sensor);
-	
 }
 
 
-void py_ReadMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
+int py_ReadMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
 		    PyObject *pyTri, PyObject *pyTet, PyObject *pyEdg,
 		    PyObject *pyHex, PyObject *pyQua, PyObject *pyPyr,
 		    PyObject *pyPri, PyObject *pySol, PyObject *pySolHeader,
@@ -86,52 +95,64 @@ void py_ReadMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
 
     for (i=1; i<=Msh->NbrVer; ++i){
 	for (j=0; j<3; ++j)
-	    PyList_Append(pyVer, PyFloat_FromDouble(Msh->Ver[i][j]));
+	    if (-1 == PyList_Append(pyVer, PyFloat_FromDouble(Msh->Ver[i][j])))
+		goto err;
     }
 
     for (i=1; i<=Msh->NbrTri; ++i){
 	for (j=0; j<4; ++j)
-	    PyList_Append(pyTri, PyInt_FromLong(Msh->Tri[i][j]));
+	    if (-1 == PyList_Append(pyTri, PyInt_FromLong(Msh->Tri[i][j])))
+		goto err;
     }
 
     for (i=1; i<=Msh->NbrTet; ++i){
 	for (j=0; j<5; ++j)
-	    PyList_Append(pyTet, PyInt_FromLong(Msh->Tet[i][j]));
+	    if (-1 == PyList_Append(pyTet, PyInt_FromLong(Msh->Tet[i][j])))
+		goto err;
     }
 
     for (i=1; i<=Msh->NbrEfr; ++i){
 	for (j=0; j<3; ++j)
-	    PyList_Append(pyEdg, PyInt_FromLong(Msh->Efr[i][j]));
+	    if (-1 == PyList_Append(pyEdg, PyInt_FromLong(Msh->Efr[i][j])))
+		goto err;
     }
 
     for (i=1; i<=Msh->NbrHex; ++i){
 	for (j=0; j<9; ++j)
-	    PyList_Append(pyHex, PyInt_FromLong(Msh->Hex[i][j]));
+	    if (-1 == PyList_Append(pyHex, PyInt_FromLong(Msh->Hex[i][j])))
+		goto err;
     }
 
     for (i=1; i<=Msh->NbrQua; ++i){
 	for (j=0; j<5; ++j)
-	    PyList_Append(pyQua, PyInt_FromLong(Msh->Qua[i][j]));
+	    if (-1 == PyList_Append(pyQua, PyInt_FromLong(Msh->Qua[i][j])))
+		goto err;
     }
 
     for (i=1; i<=Msh->NbrPyr; ++i){
 	for (j=0; j<6; ++j)
-	    PyList_Append(pyPyr, PyInt_FromLong(Msh->Pyr[i][j]));
+	    if (-1 == PyList_Append(pyPyr, PyInt_FromLong(Msh->Pyr[i][j])))
+		goto err;
     }
 
-    for (i=1; i<=Msh->NbrPri; ++i){
+    for (i=1; i<=Msh->NbrPri; ++i) {
 	for (j=0; j<7; ++j)
-	    PyList_Append(pyPri, PyInt_FromLong(Msh->Pri[i][j]));
+	    if (-1 == PyList_Append(pyPri, PyInt_FromLong(Msh->Pri[i][j])))
+		goto err;
     }
 
     //--- First row of Markers contains dimension
-    PyList_Append(pyMarkers, PyInt_FromLong(Msh->Dim));
+    if (-1 == PyList_Append(pyMarkers, PyInt_FromLong(Msh->Dim))) goto err;
     for (i=1; i<=Msh->NbrMarkers; ++i){
-	PyList_Append(pyMarkers, PyString_FromString(Msh->Markers[i]));
+	if (-1 ==
+	    PyList_Append(pyMarkers, PyString_FromString(Msh->Markers[i])))
+	    goto err;
     }
 	
     for (i=0; i<=Msh->SolSiz; i++){
-	PyList_Append(pySolHeader, PyString_FromString(Msh->SolTag[i]));
+	if (-1 ==
+	    PyList_Append(pySolHeader, PyString_FromString(Msh->SolTag[i])))
+	    goto err;
     }
 	
     if ( Msh->Sol ) {
@@ -140,15 +161,26 @@ void py_ReadMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
 	int iVer;
 	for (iVer=1; iVer<=Msh->NbrVer; iVer++) {
 	    for (i=0; i<Msh->SolSiz; i++) {
-		PyList_Append(pySol, PyFloat_FromDouble(Msh->Sol[iVer*Msh->SolSiz+i]));
+		if (-1 ==
+		    PyList_Append(
+		        pySol,
+			PyFloat_FromDouble(Msh->Sol[iVer*Msh->SolSiz+i])
+		    ))
+		    goto err;
 	    }
 	}
 		
     }
-	
+
     if ( Msh )
 	FreeMesh(Msh);
-	
+
+
+    return 1;
+    
+
+ err:
+    return 0;
 }
 
 
@@ -158,6 +190,8 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
     
     PyObject *mesh = NULL;
     PyObject *item = NULL;
+    PyObject *item_ = NULL;
+    PyObject *value = NULL;
     PyObject *dimension  = NULL;
 
     npy_intp dim[2];
@@ -219,287 +253,334 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	NULL == EdgList || NULL == HexList || NULL == QuaList ||
 	NULL == PyrList || NULL == PriList || NULL == SolList ||
 	NULL == SolTagList || NULL == MarkersList)
-	return NULL;
+	goto err;
 
     /* Reading the mesh and solution */
-    py_ReadMesh__ (mesh_name_, solution_name_, VerList, TriList, TetList,
-		   EdgList, HexList, QuaList, PyrList, PriList, SolList,
-		   SolTagList, MarkersList);
+    if (!py_ReadMesh__ (mesh_name_, solution_name_, VerList, TriList, TetList,
+			EdgList, HexList, QuaList, PyrList, PriList, SolList,
+			SolTagList, MarkersList))
+	goto err;
 
     dimension = PyList_GetItem(MarkersList, 0);
-    if (NULL == dimension) return NULL;
+    if (NULL == dimension) goto err;
 
-    /* Determining the number of elements */
-    int NbrTet = PyList_Size(TetList)/5;
-    int NbrTri = PyList_Size(TriList)/4;
-    int NbrEdg = PyList_Size(EdgList)/3;
-    int NbrHex = PyList_Size(HexList)/9;
-    int NbrQua = PyList_Size(QuaList)/5;
-    int NbrPyr = PyList_Size(PyrList)/6;
-    int NbrPri = PyList_Size(PriList)/7;
-    int NbrVer = PyList_Size(VerList)/3;
 
-    int SolSiz = PyList_Size(SolList)/NbrVer;
-    double (*SolPtr)[SolSiz] = NULL;
+    {
 
-    /* Extracting the tetrahdra from Python list as an array */
-    if (0 < NbrTet) {
-	dim[0] = NbrTet;
-	dim[1] = 5;
-	/* TetPtr = unflat_PyList(TetList, dim, sizeof(int)); */
-	TetPtr = unflat_int_PyList(TetList, dim);
-	if (NULL == TetPtr) goto err;
-	TetArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, TetPtr);
-	PyArray_ENABLEFLAGS((PyArrayObject *)TetArray, NPY_ARRAY_OWNDATA);
-	if (NULL == TetArray) goto err;
-    }
-    else {
-	dim[0] = 0;
-	dim[1] = 0;
-	TetArray = PyArray_SimpleNew(2, dim, NPY_INT);
-	PyArray_ENABLEFLAGS((PyArrayObject *)TetArray, NPY_ARRAY_OWNDATA);
-	if (NULL == TetArray) goto err;
-    }
+	/* Determining the number of elements */
+	int NbrTet = PyList_Size(TetList)/5;
+	int NbrTri = PyList_Size(TriList)/4;
+	int NbrEdg = PyList_Size(EdgList)/3;
+	int NbrHex = PyList_Size(HexList)/9;
+	int NbrQua = PyList_Size(QuaList)/5;
+	int NbrPyr = PyList_Size(PyrList)/6;
+	int NbrPri = PyList_Size(PriList)/7;
+	int NbrVer = PyList_Size(VerList)/3;
 
-    /* Extracting the triangles from Python list as an array */
-    if (0 < NbrTri) {
-	dim[0] = NbrTri;
-	dim[1] = 4;
-	/* TriPtr = unflat_PyList(TriList, dim, sizeof(int)); */
-	TriPtr = unflat_int_PyList(TriList, dim);
-	if (NULL == TriPtr) goto err;
-	TriArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, TriPtr);
-	PyArray_ENABLEFLAGS((PyArrayObject *)TriArray, NPY_ARRAY_OWNDATA);
-	if (NULL == TriArray) goto err;
-    }
-    else {
-	dim[0] = 0;
-	dim[1] = 0;
-	TriArray = PyArray_SimpleNew(2, dim, NPY_INT);
-	PyArray_ENABLEFLAGS((PyArrayObject *)TriArray, NPY_ARRAY_OWNDATA);
-	if (NULL == TriArray) goto err;
-    }
+	int SolSiz = PyList_Size(SolList)/NbrVer;
+	double (*SolPtr)[SolSiz] = NULL;
+
+	/* Extracting the tetrahdra from Python list as an array */
+	if (0 < NbrTet) {
+	    dim[0] = NbrTet;
+	    dim[1] = 5;
+	    /* TetPtr = unflat_PyList(TetList, dim, sizeof(int)); */
+	    TetPtr = unflat_int_PyList(TetList, dim);
+	    Py_DECREF(TetList);
+	    if (NULL == TetPtr) goto err_;
+	    TetArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, TetPtr);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)TetArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == TetArray) goto err_;
+	}
+	else {
+	    Py_DECREF(TetList);
+	    dim[0] = 0;
+	    dim[1] = 0;
+	    TetArray = PyArray_SimpleNew(2, dim, NPY_INT);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)TetArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == TetArray) goto err_;
+	}
+
+	/* Extracting the triangles from Python list as an array */
+	if (0 < NbrTri) {
+	    dim[0] = NbrTri;
+	    dim[1] = 4;
+	    /* TriPtr = unflat_PyList(TriList, dim, sizeof(int)); */
+	    TriPtr = unflat_int_PyList(TriList, dim);
+	    Py_DECREF(TriList);
+	    if (NULL == TriPtr) goto err_;
+	    TriArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, TriPtr);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)TriArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == TriArray) goto err_;
+	}
+	else {
+	    Py_DECREF(TriList);
+	    dim[0] = 0;
+	    dim[1] = 0;
+	    TriArray = PyArray_SimpleNew(2, dim, NPY_INT);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)TriArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == TriArray) goto err_;
+	}
     
-    /* Extracting the edges from Python list as an array */
-    if (0 < NbrEdg) {
-	dim[0] = NbrEdg;
-	dim[1] = 3;
-	/* EdgPtr = unflat_PyList(EdgList, dim, sizeof(int)); */
-	EdgPtr = unflat_int_PyList(EdgList, dim);
-	if (NULL == EdgPtr) goto err;
-	EdgArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, EdgPtr);
-	PyArray_ENABLEFLAGS((PyArrayObject *)EdgArray, NPY_ARRAY_OWNDATA);
-	if (NULL == EdgArray) goto err;
-    }
-    else {
-	dim[0] = 0;
-	dim[1] = 0;
-	EdgArray = PyArray_SimpleNew(2, dim, NPY_INT);
-	PyArray_ENABLEFLAGS((PyArrayObject *)EdgArray, NPY_ARRAY_OWNDATA);
-	if (NULL == EdgArray) goto err;
-    }
+	/* Extracting the edges from Python list as an array */
+	if (0 < NbrEdg) {
+	    dim[0] = NbrEdg;
+	    dim[1] = 3;
+	    /* EdgPtr = unflat_PyList(EdgList, dim, sizeof(int)); */
+	    EdgPtr = unflat_int_PyList(EdgList, dim);
+	    Py_DECREF(EdgList);
+	    if (NULL == EdgPtr) goto err_;
+	    EdgArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, EdgPtr);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)EdgArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == EdgArray) goto err_;
+	}
+	else {
+	    Py_DECREF(EdgList);
+	    dim[0] = 0;
+	    dim[1] = 0;
+	    EdgArray = PyArray_SimpleNew(2, dim, NPY_INT);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)EdgArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == EdgArray) goto err_;
+	}
 
-    /* Extracting the hexahedra from Python list as an array */
-    if (0 < NbrHex) {
-	dim[0] = NbrHex;
-	dim[1] = 9;
-	/* HexPtr = unflat_PyList(HexList, dim, sizeof(int)); */
-	HexPtr = unflat_int_PyList(HexList, dim);
-	if (NULL == HexPtr) goto err;
-	HexArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, HexPtr);
-	PyArray_ENABLEFLAGS((PyArrayObject *)HexArray, NPY_ARRAY_OWNDATA);
-	if (NULL == HexArray) goto err;
-    }
-    else {
-	dim[0] = 0;
-	dim[1] = 0;
-	HexArray = PyArray_SimpleNew(2, dim, NPY_INT);
-	PyArray_ENABLEFLAGS((PyArrayObject *)HexArray, NPY_ARRAY_OWNDATA);
-	if (NULL == HexArray) goto err;
-    }
+	/* Extracting the hexahedra from Python list as an array */
+	if (0 < NbrHex) {
+	    dim[0] = NbrHex;
+	    dim[1] = 9;
+	    /* HexPtr = unflat_PyList(HexList, dim, sizeof(int)); */
+	    HexPtr = unflat_int_PyList(HexList, dim);
+	    Py_DECREF(HexList);
+	    if (NULL == HexPtr) goto err_;
+	    HexArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, HexPtr);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)HexArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == HexArray) goto err_;
+	}
+	else {
+	    Py_DECREF(HexList);
+	    dim[0] = 0;
+	    dim[1] = 0;
+	    HexArray = PyArray_SimpleNew(2, dim, NPY_INT);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)HexArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == HexArray) goto err_;
+	}
 
-    /* Extracting the quadrilaterals from Python list as an array */
-    if (0 < NbrQua) {
-	dim[0] = NbrQua;
-	dim[1] = 5;
-	/* QuaPtr = unflat_PyList(QuaList, dim, sizeof(int)); */
-	QuaPtr = unflat_int_PyList(QuaList, dim);
-	if (NULL == QuaPtr) goto err;
-	QuaArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, QuaPtr);
-	PyArray_ENABLEFLAGS((PyArrayObject *)QuaArray, NPY_ARRAY_OWNDATA);
-	if (NULL == QuaArray) goto err;
-    }
-    else {
-	dim[0] = 0;
-	dim[1] = 0;
-	QuaArray = PyArray_SimpleNew(2, dim, NPY_INT);
-	PyArray_ENABLEFLAGS((PyArrayObject *)QuaArray, NPY_ARRAY_OWNDATA);
-	if (NULL == QuaArray) goto err;
-    }
+	/* Extracting the quadrilaterals from Python list as an array */
+	if (0 < NbrQua) {
+	    dim[0] = NbrQua;
+	    dim[1] = 5;
+	    /* QuaPtr = unflat_PyList(QuaList, dim, sizeof(int)); */
+	    QuaPtr = unflat_int_PyList(QuaList, dim);
+	    Py_DECREF(QuaList);
+	    if (NULL == QuaPtr) goto err_;
+	    QuaArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, QuaPtr);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)QuaArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == QuaArray) goto err_;
+	}
+	else {
+	    Py_DECREF(QuaList);
+	    dim[0] = 0;
+	    dim[1] = 0;
+	    QuaArray = PyArray_SimpleNew(2, dim, NPY_INT);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)QuaArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == QuaArray) goto err_;
+	}
 
-    /* Extracting the pyramids from Python list as an array */
-    if (0 < NbrPyr) {
-	dim[0] = NbrPyr;
-	dim[1] = 6;
-	/* PyrPtr = unflat_PyList(PyrList, dim, sizeof(int)); */
-	PyrPtr = unflat_int_PyList(PyrList, dim);
-	if (NULL == PyrPtr) goto err;
-	PyrArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, PyrPtr);
-	PyArray_ENABLEFLAGS((PyArrayObject *)PyrArray, NPY_ARRAY_OWNDATA);
-	if (NULL == PyrArray) goto err;
-    }
-    else {
-	dim[0] = 0;
-	dim[1] = 0;
-	PyrArray = PyArray_SimpleNew(2, dim, NPY_INT);
-	PyArray_ENABLEFLAGS((PyArrayObject *)PyrArray, NPY_ARRAY_OWNDATA);
-	if (NULL == PyrArray) goto err;
-    }
+	/* Extracting the pyramids from Python list as an array */
+	if (0 < NbrPyr) {
+	    dim[0] = NbrPyr;
+	    dim[1] = 6;
+	    /* PyrPtr = unflat_PyList(PyrList, dim, sizeof(int)); */
+	    PyrPtr = unflat_int_PyList(PyrList, dim);
+	    Py_DECREF(PyrList);
+	    if (NULL == PyrPtr) goto err_;
+	    PyrArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, PyrPtr);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)PyrArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == PyrArray) goto err_;
+	}
+	else {
+	    Py_DECREF(PyrList);
+	    dim[0] = 0;
+	    dim[1] = 0;
+	    PyrArray = PyArray_SimpleNew(2, dim, NPY_INT);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)PyrArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == PyrArray) goto err_;
+	}
 
-    /* Extracting the prisms from Python list as an array */
-    if (0 < NbrPri) {
-	dim[0] = NbrPri;
-	dim[1] = 7;
-	/* PriPtr = unflat_PyList(PriList, dim, sizeof(int)); */
-	PriPtr = unflat_int_PyList(PriList, dim);
-	if (NULL == PriPtr) goto err;
-	PriArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, PriPtr);
-	PyArray_ENABLEFLAGS((PyArrayObject *)PriArray, NPY_ARRAY_OWNDATA);
-	if (NULL == PriArray) goto err;
-    }
-    else {
-	dim[0] = 0;
-	dim[1] = 0;
-	PriArray = PyArray_SimpleNew(2, dim, NPY_INT);
-	PyArray_ENABLEFLAGS((PyArrayObject *)PriArray, NPY_ARRAY_OWNDATA);
-	if (NULL == PriArray) goto err;
-    }
+	/* Extracting the prisms from Python list as an array */
+	if (0 < NbrPri) {
+	    dim[0] = NbrPri;
+	    dim[1] = 7;
+	    /* PriPtr = unflat_PyList(PriList, dim, sizeof(int)); */
+	    PriPtr = unflat_int_PyList(PriList, dim);
+	    Py_DECREF(PriList);
+	    if (NULL == PriPtr) goto err_;
+	    PriArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, PriPtr);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)PriArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == PriArray) goto err_;
+	}
+	else {
+	    Py_DECREF(PriList);
+	    dim[0] = 0;
+	    dim[1] = 0;
+	    PriArray = PyArray_SimpleNew(2, dim, NPY_INT);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)PriArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == PriArray) goto err_;
+	}
     
-    /* Extracting the vertices from Python list as an array */
-    if (0 < NbrVer) {
-	dim[0] = NbrVer;
-	dim[1] = 3;
-	/* VerPtr = unflat_PyList(VerList, dim, sizeof(double)); */
-	VerPtr = unflat_double_PyList(VerList, dim);
-	if (NULL == VerPtr) goto err;
-	VerArray = PyArray_SimpleNewFromData(2, dim, NPY_DOUBLE, VerPtr);
-	PyArray_ENABLEFLAGS((PyArrayObject *)VerArray, NPY_ARRAY_OWNDATA);
-	if (NULL == VerArray) goto err;
-    }
-    else {
-	dim[0] = 0;
-	dim[1] = 0;
-	VerArray = PyArray_SimpleNew(2, dim, NPY_DOUBLE);
-	PyArray_ENABLEFLAGS((PyArrayObject *)VerArray, NPY_ARRAY_OWNDATA);
-	if (NULL == VerArray) goto err;
-    }
+	/* Extracting the vertices from Python list as an array */
+	if (0 < NbrVer) {
+	    dim[0] = NbrVer;
+	    dim[1] = 3;
+	    /* VerPtr = unflat_PyList(VerList, dim, sizeof(double)); */
+	    VerPtr = unflat_double_PyList(VerList, dim);
+	    Py_DECREF(VerList);
+	    if (NULL == VerPtr) goto err_;
+	    VerArray = PyArray_SimpleNewFromData(2, dim, NPY_DOUBLE, VerPtr);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)VerArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == VerArray) goto err_;
+	}
+	else {
+	    Py_DECREF(VerList);
+	    dim[0] = 0;
+	    dim[1] = 0;
+	    VerArray = PyArray_SimpleNew(2, dim, NPY_DOUBLE);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)VerArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == VerArray) goto err_;
+	}
     
-    /* Extracting the solution from Python list as an array */
-    if (0 < NbrVer) {
-	dim[0] = NbrVer;
-	dim[1] = SolSiz;
-	/* SolPtr = unflat_PyList(SolList, dim, sizeof(double)); */
-	SolPtr = unflat_double_PyList(SolList, dim);
-	if (NULL == SolPtr) goto err;
-	SolArray = PyArray_SimpleNewFromData(2, dim, NPY_DOUBLE, SolPtr);
-	PyArray_ENABLEFLAGS((PyArrayObject *)SolArray, NPY_ARRAY_OWNDATA);
-	if (NULL == SolArray) goto err;
-    }
-    else {
-	dim[0] = 0;
-	dim[1] = 0;
-	SolArray = PyArray_SimpleNew(2, dim, NPY_INT);
-	PyArray_ENABLEFLAGS((PyArrayObject *)SolArray, NPY_ARRAY_OWNDATA);
-	if (NULL == SolArray) goto err;
-    }
+	/* Extracting the solution from Python list as an array */
+	if (0 < NbrVer) {
+	    dim[0] = NbrVer;
+	    dim[1] = SolSiz;
+	    /* SolPtr = unflat_PyList(SolList, dim, sizeof(double)); */
+	    SolPtr = unflat_double_PyList(SolList, dim);
+	    Py_DECREF(SolList);
+	    if (NULL == SolPtr) goto err_;
+	    SolArray = PyArray_SimpleNewFromData(2, dim, NPY_DOUBLE, SolPtr);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)SolArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == SolArray) goto err_;
+	}
+	else {
+	    Py_DECREF(SolList);
+	    dim[0] = 0;
+	    dim[1] = 0;
+	    SolArray = PyArray_SimpleNew(2, dim, NPY_INT);
+	    PyArray_ENABLEFLAGS((PyArrayObject *)SolArray, NPY_ARRAY_OWNDATA);
+	    if (NULL == SolArray) goto err_;
+	}
 
-    /* Filling the mesh dictionary */
-    mesh = PyDict_New();
-    if (NULL == mesh) goto err;
+	/* Filling the mesh dictionary */
+	mesh = PyDict_New();
+	if (NULL == mesh) goto err_;
 
-    if (NULL != dimension) {
-	if (-1 == PyDict_SetItemString(mesh, "dimension", dimension))
-	    goto err;
-    }
-    else {
-	fprintf(stderr, "Error: no dimension was found\n");
+	if (NULL != dimension) {
+	    if (-1 == PyDict_SetItemString(mesh, "dimension", dimension))
+		goto err_;
+	    Py_DECREF(dimension);
+	}
+	else {
+	    fprintf(stderr, "Error: no dimension was found\n");
+	    goto err_;
+	}
+    
+	if (NULL != VerArray) {
+	    if (-1 == PyDict_SetItemString(mesh, "xyz", VerArray))
+		goto err_;
+	    Py_DECREF(VerArray);
+	}
+    
+	if (NULL != TriArray) {
+	    if (-1 == PyDict_SetItemString(mesh, "triangles", TriArray))
+		goto err_;
+	    Py_DECREF(TriArray);
+	}
+    
+	if (NULL != TetArray) {
+	    if (-1 == PyDict_SetItemString(mesh, "tetrahedra", TetArray))
+		goto err_;
+	    Py_DECREF(TetArray);
+	}
+    
+	if (NULL != EdgArray) {
+	    if (-1 == PyDict_SetItemString(mesh, "edges", EdgArray))
+		goto err_;
+	    Py_DECREF(EdgArray);
+	}
+
+	if (NULL != HexArray) {
+	    if (-1 == PyDict_SetItemString(mesh, "hexahedra", HexArray))
+		goto err_;
+	    Py_DECREF(HexArray);
+	}
+
+	if (NULL != QuaArray) {
+	    if (-1 == PyDict_SetItemString(mesh, "quadrilaterals", QuaArray))
+		goto err_;
+	    Py_DECREF(QuaArray);
+	}
+
+	if (NULL != PyrArray) {
+	    if (-1 == PyDict_SetItemString(mesh, "pyramids", PyrArray))
+		goto err_;
+	    Py_DECREF(PyrArray);
+	}
+
+	if (NULL != PriArray) {
+	    if (-1 == PyDict_SetItemString(mesh, "prisms", PriArray))
+		goto err_;
+	    Py_DECREF(PriArray);
+	}
+
+	if (NULL != SolArray){ 
+	    if (-1 == PyDict_SetItemString(mesh, "solution", SolArray))
+		goto err_;
+	    Py_DECREF(SolArray);
+	}
+
+	if (NULL != SolTagList) {
+	    if (-1 == PyDict_SetItemString(mesh, "solution_tag", SolTagList))
+		goto err_;
+	    Py_DECREF(SolTagList);
+	}
+
+	if (NULL != MarkersList) {
+	    if (-1 == PyDict_SetItemString(mesh, "markers", MarkersList))
+		goto err_;
+	    Py_DECREF(MarkersList);
+	}
+
+
+	item = PyList_New(0);
+	if (NULL == item) goto err_;
+	if (-1 == PyDict_SetItemString(mesh, "corners", item)) goto err_;
+	Py_DECREF(item);
+    
+	item = PyDict_New();
+	if (NULL == item) goto err_;
+	int SolTag_len = PyList_Size(SolTagList);
+	for (int i = 0 ; i < SolTag_len ; ++i) {
+	    item_ = PyList_GetItem(SolTagList, i);
+	    if (NULL == item_) goto err_;
+	    value = Py_BuildValue("i", i);
+	    if (NULL == value) goto err_;
+	    if (-1 == PyDict_SetItem(item, item_, value)) goto err_;
+	    Py_DECREF(item_);
+	}
+	if (-1 == PyDict_SetItemString(mesh, "id_solution_tag", item))
+	    goto err_;
+	Py_DECREF(item);
+
+	return mesh;
+
+
+    err_:
+	if (NULL != SolPtr) {
+	    free(SolPtr);
+	    SolPtr = NULL;
+	}
+
 	goto err;
     }
-    
-    if (NULL != VerArray) {
-	if (-1 == PyDict_SetItemString(mesh, "xyz", VerArray))
-	    goto err;
-    }
-    
-    if (NULL != TriArray) {
-	if (-1 == PyDict_SetItemString(mesh, "triangles", TriArray))
-	    goto err;
-    }
-    
-    if (NULL != TetArray) {
-	if (-1 == PyDict_SetItemString(mesh, "tetrahedra", TetArray))
-	    goto err;
-    }
-    
-    if (NULL != EdgArray) {
-	if (-1 == PyDict_SetItemString(mesh, "edges", EdgArray))
-	    goto err;
-    }
-
-    if (NULL != HexArray) {
-	if (-1 == PyDict_SetItemString(mesh, "hexahedra", HexArray))
-	    goto err;
-    }
-
-    if (NULL != QuaArray) {
-	if (-1 == PyDict_SetItemString(mesh, "quadrilaterals", QuaArray))
-	    goto err;
-    }
-
-    if (NULL != PyrArray) {
-	if (-1 == PyDict_SetItemString(mesh, "pyramids", PyrArray))
-	    goto err;
-    }
-
-    if (NULL != PriArray) {
-	if (-1 == PyDict_SetItemString(mesh, "prisms", PriArray))
-	    goto err;
-    }
-
-    if (NULL != SolArray){ 
-	if (-1 == PyDict_SetItemString(mesh, "solution", SolArray))
-	    goto err;
-    }
-
-    if (NULL != SolTagList) {
-	if (-1 == PyDict_SetItemString(mesh, "solution_tag", SolTagList))
-	    goto err;
-    }
-
-    if (NULL != MarkersList) {
-	if (-1 == PyDict_SetItemString(mesh, "markers", MarkersList))
-	    goto err;
-    }
-
-
-    item = PyList_New(0);
-    if (NULL == item) goto err;
-    if (-1 == PyDict_SetItemString(mesh, "corners", item)) goto err;
-    
-    item = PyDict_New();
-    if (NULL == item) goto err;
-    int SolTag_len = PyList_Size(SolTagList);
-    for (int i = 0 ; i < SolTag_len ; ++i) {
-	PyObject *item_ = NULL;
-	item_ = PyList_GetItem(SolTagList, i);
-	if (NULL == item_) goto err;
-	PyObject *value = Py_BuildValue("i", i);
-	if (NULL == value) goto err;
-	if (-1 == PyDict_SetItem(item, item_, value)) goto err;
-    }
-    if (-1 == PyDict_SetItemString(mesh, "id_solution_tag", item)) goto err;
-
-    return mesh;
 
 
  err:
@@ -566,11 +647,6 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
     if (NULL != VerPtr) {
     	free(VerPtr);
     	VerPtr = NULL;
-    }
-
-    if (NULL != SolPtr) {
-    	free(SolPtr);
-    	SolPtr = NULL;
     }
 
     return NULL;
@@ -811,9 +887,9 @@ int py_WriteMeshFromDict__ (PyObject *mesh, PyObject *mesh_name,
     }
     Py_DECREF(key);
 
-    py_WriteMesh__ (mesh_name_, solution_name_, VerList, TriList, TetList,
-		    EdgList, HexList, QuaList, PyrList, PriList, 
-		    SolList, MarkersList, Dim);
+    if (!py_WriteMesh__ (mesh_name_, solution_name_, VerList, TriList, TetList,
+			EdgList, HexList, QuaList, PyrList, PriList, 
+			SolList, MarkersList, Dim)) goto err;
 
     Py_DECREF(TetList);
     Py_DECREF(TriList);
@@ -1064,11 +1140,11 @@ PyObject *py_CreateSensor__ (PyObject *SolDict, PyObject *sensor)
 }
 
 
-void py_WriteMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
-		     PyObject *pyTri, PyObject *pyTet, PyObject *pyEdg,
-		     PyObject *pyHex, PyObject *pyQua, PyObject *pyPyr,
-		     PyObject *pyPri, PyObject *pySol, PyObject *pyMarkers,
-		     int Dim)
+int py_WriteMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
+		    PyObject *pyTri, PyObject *pyTet, PyObject *pyEdg,
+		    PyObject *pyHex, PyObject *pyQua, PyObject *pyPyr,
+		    PyObject *pyPri, PyObject *pySol, PyObject *pyMarkers,
+		    int Dim)
 {
     int i, j;
     Mesh *Msh= NULL;
@@ -1400,7 +1476,10 @@ void py_WriteMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
 	    sprintf(OutSol, "%s.dat", BasNamSol);
 	    WriteSU2Solution (OutSol, Msh, Msh->Sol, Msh->NbrVer,  Msh->SolSiz, Msh->SolTag);
 	}
-    }		
+    }
+
+
+    return 1;
 }
     
 

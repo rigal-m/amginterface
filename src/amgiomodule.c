@@ -11,7 +11,6 @@
 #include "tools.h"
 
 
-
 static PyObject *
 pyamg_ConvertSU2toLibmeshb(PyObject *self, PyObject *args, PyObject *kwargs)
 {
@@ -73,6 +72,7 @@ pyamg_SplitSolution(PyObject *self, PyObject *args, PyObject *kwargs)
 static PyObject *
 pyamg_ReadMeshToLists(PyObject *self, PyObject *args, PyObject *kwargs)
 {
+    char error_msg[BUFSIZE];
     static char *kwlist[] = {
 	"mesh_name", "sol_name", "vertices", "triangles", "tetrahedra", "edges",
 	"hexahedra", "quadrilaterals", "pyramids", "prisms", "sol", "sol_ref",
@@ -100,17 +100,88 @@ pyamg_ReadMeshToLists(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &pyPri, &pySol, &pySolRef, &pyMarkers))
 	return NULL;
 
-    py_ReadMesh__ (MshNam, SolNam, pyVer, pyTri, pyTet, pyEdg, pyHex, pyQua,
-		   pyPyr, pyPri, pySol, pySolRef, pyMarkers);
+    if (!PyList_Check(pyVer)) {
+	sprintf(error_msg, "read_mesh_to_lists: 3rd argument [vertices] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyTri)) {
+	sprintf(error_msg, "read_mesh_to_lists: 4th argument [triangles] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyTet)) {
+	sprintf(error_msg, "read_mesh_to_lists: 5th argument [tetrahedra] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyEdg)) {
+	sprintf(error_msg, "read_mesh_to_lists: 6th argument [edges] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyHex)) {
+	sprintf(error_msg, "read_mesh_to_lists: 7th argument [hexahedra] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyQua)) {
+	sprintf(error_msg, "read_mesh_to_lists: 8th argument [quadrilaterals] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyPyr)) {
+	sprintf(error_msg, "read_mesh_to_lists: 9th argument [pyramids] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyPri)) {
+	sprintf(error_msg, "read_mesh_to_lists: 10th argument [prisms] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pySol)) {
+	sprintf(error_msg, "read_mesh_to_lists: 11th argument [sol] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pySolRef)) {
+	sprintf(error_msg, "read_mesh_to_lists: 12th argument [sol_ref] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyMarkers)) {
+	sprintf(error_msg, "read_mesh_to_lists: 13th argument [markers] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!py_ReadMesh__ (MshNam, SolNam, pyVer, pyTri, pyTet, pyEdg, pyHex, pyQua,
+			pyPyr, pyPri, pySol, pySolRef, pyMarkers)) goto err;
 
     Py_INCREF(Py_None);
     return Py_None;
+
+
+ err:
+    return NULL;
 }
 
 
 static PyObject *
 pyamg_WriteMeshFromLists(PyObject *self, PyObject *args, PyObject *kwargs)
 {
+    char error_msg[BUFSIZE];
     static char *kwlist[] = {
 	"mesh_name", "sol_name", "vertices", "triangles", "tetrahedra", "edges",
 	"hexahedra", "quadrilaterals", "pyramids", "prisms", "sol", "markers",
@@ -139,17 +210,83 @@ pyamg_WriteMeshFromLists(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &pyPri, &pySol, &pyMarkers, &Dim))
 	return NULL;
 
+
+    if (!PyList_Check(pyVer)) {
+	sprintf(error_msg, "write_mesh_from_lists: 3rd argument [vertices] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyTri)) {
+	sprintf(error_msg, "write_mesh_from_lists: 4th argument [triangles] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyTet)) {
+	sprintf(error_msg, "write_mesh_from_lists: 5th argument [tetrahedra] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyEdg)) {
+	sprintf(error_msg, "write_mesh_from_lists: 6th argument [edges] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyHex)) {
+	sprintf(error_msg, "write_mesh_from_lists: 7th argument [hexahedra] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyQua)) {
+	sprintf(error_msg, "write_mesh_from_lists: 8th argument "
+		"[quadrilaterals] should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyPyr)) {
+	sprintf(error_msg, "write_mesh_from_lists: 9th argument [pyramids] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyPri)) {
+	sprintf(error_msg, "write_mesh_from_lists: 10th argument [prisms] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pySol)) {
+	sprintf(error_msg, "write_mesh_from_lists: 11th argument [sol] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pyMarkers)) {
+	sprintf(error_msg, "write_mesh_from_lists: 12th argument [markers] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
     py_WriteMesh__ (MshNam, SolNam, pyVer, pyTri, pyTet, pyEdg, pyHex, pyQua,
 		    pyPyr, pyPri, pySol, pyMarkers, Dim);
 
     Py_INCREF(Py_None);
     return Py_None;
+
+
+ err:
+    return NULL;
 }
 
 
 static PyObject *
 pyamg_WriteSolutionFromLists(PyObject *self, PyObject *args, PyObject *kwargs)
 {
+    char error_msg[BUFSIZE];
     static char *kwlist[] = {
 	"sol_name", "vertices", "sol", "sol_header", "nb_vertices", "dim", NULL
     };
@@ -168,16 +305,40 @@ pyamg_WriteSolutionFromLists(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &NbrVer, &Dim))
 	return NULL;
 
+    
+    if (!PyList_Check(pyVer)) {
+	sprintf(error_msg, "write_solution_from_lists: 2nd argument [vertices] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pySol)) {
+	sprintf(error_msg, "write_solution_from_lists: 3rd argument [sol] "
+		"should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(pySolHeader)) {
+	sprintf(error_msg, "write_solution_from_lists: 4th argument "
+		"[sol_header] should be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
     py_WriteSolution__ (SolNam, pyVer, pySol, pySolHeader, NbrVer, Dim);
 
     Py_INCREF(Py_None);
     return Py_None;
+
+
+ err:
+    return NULL;
 }
 
 
 static PyObject *
 pyamg_GetMeshToDict(PyObject *self, PyObject *args, PyObject *kwargs)
 {
+    char error_msg[BUFSIZE];
     static char *kwlist[] = {"mesh_name", "sol_name", NULL};
 
     PyObject *MeshNam = NULL;
@@ -187,13 +348,30 @@ pyamg_GetMeshToDict(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &MeshNam, &SolNam))
 	return NULL;
 
+    if (!PyString_Check(MeshNam)) {
+	sprintf(error_msg, "get_mesh_to_dict: 1st argument [mesh_name] should "
+		"be a string\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyString_Check(SolNam)) {
+	sprintf(error_msg, "get_mesh_to_dict: 2nd argument [sol_name] should "
+		"be a string\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
     return py_GetMeshToDict__ (MeshNam, SolNam);
+
+
+ err:
+    return NULL;
 }
 
 
 static PyObject *
 pyamg_WriteMeshFromDict(PyObject *self, PyObject *args, PyObject *kwargs)
 {
+    char error_msg[BUFSIZE];
     static char *kwlist[] = {"mesh", "mesh_name", "sol_name", NULL};
 
     PyObject *Mesh = NULL;
@@ -204,19 +382,39 @@ pyamg_WriteMeshFromDict(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &Mesh, &MeshNam, &SolNam))
 	return NULL;
 
-    if (!PyDict_Check(Mesh) || !PyString_Check(MeshNam)) return NULL;
-    if (NULL != SolNam && !PyString_Check(SolNam)) return NULL;
+    if (!PyDict_Check(Mesh)) {
+	sprintf(error_msg, "write_mesh_from_dict: 1st argument [mesh] should "
+		"be a dictionary\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyString_Check(MeshNam)) {
+	sprintf(error_msg, "write_mesh_from_dict: 2nd argument [mesh_name] "
+		"should be a string\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (NULL != SolNam && !PyString_Check(SolNam)) {
+	sprintf(error_msg, "write_mesh_from_dict: 3rd argument [sol_name] "
+		"should be a string\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
 
     if(!py_WriteMeshFromDict__ (Mesh, MeshNam, SolNam)) return NULL;
 
     Py_INCREF(Py_None);
     return Py_None;
+
+
+ err:
+    return NULL;
 }
 
 
 static PyObject *
 pyamg_WriteSolFromDict(PyObject *self, PyObject *args, PyObject *kwargs)
 {
+    char error_msg[BUFSIZE];
     static char *kwlist[] = {"sol", "sol_name", NULL};
 
     PyObject *Sol = NULL;
@@ -226,18 +424,33 @@ pyamg_WriteSolFromDict(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &Sol, &SolNam))
 	return NULL;
 
-    if (!PyDict_Check(Sol)) return NULL;
+    if (!PyDict_Check(Sol)) {
+	sprintf(error_msg, "write_sol_from_dict: 1st argument [sol] "
+		"should be a dictionary\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyString_Check(SolNam)) {
+	sprintf(error_msg, "write_sol_from_dict: 2nd argument [sol_name] "
+		"should be a string\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
 
     if(!py_WriteSolFromDict__ (Sol, SolNam)) return NULL;
 
     Py_INCREF(Py_None);
     return Py_None;
+
+
+ err:
+    return NULL;
 }
 
 
 static PyObject *
 pyamg_CreateSensor(PyObject *self, PyObject *args, PyObject *kwargs)
 {
+    char error_msg[BUFSIZE];
     static char *kwlist[] = {"sol", "sensor", NULL};
 
     PyObject *SolDict = NULL;
@@ -247,94 +460,179 @@ pyamg_CreateSensor(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &SolDict, &Sensor))
 	return NULL;
 
-    if (!PyDict_Check(SolDict) || !PyString_Check(Sensor)) return NULL;
+    if (!PyDict_Check(SolDict)) {
+	sprintf(error_msg, "create_sensor: 1st argument [sol] should be a "
+		"dictionary\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyString_Check(Sensor)) {
+	sprintf(error_msg, "create_sensor: 2nd argument [sensor] should be a "
+		"string\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
 
     return py_CreateSensor__ (SolDict, Sensor);
+
+
+ err:
+    return NULL;
 }
 
 
 static PyObject *
 pyamg_GetMeshSizes(PyObject *self, PyObject *args)
 {
+    char error_msg[BUFSIZE];
     PyObject *ConfigDict = NULL;
 
     if (!PyArg_ParseTuple(args, "O", &ConfigDict))
 	return NULL;
 
-    if (!PyDict_Check(ConfigDict)) return NULL;
+    if (!PyDict_Check(ConfigDict)) {
+	sprintf(error_msg, "get_mesh_sizes: 1st argument [config_dict] should "
+		"be a dictionary\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
 
     return get_mesh_sizes__ (ConfigDict);
+
+
+ err:
+    return NULL;
 }
 
 
 static PyObject *
 pyamg_GetSubIterations(PyObject *self, PyObject *args)
 {
+    char error_msg[BUFSIZE];
     PyObject *ConfigDict = NULL;
 
     if (!PyArg_ParseTuple(args, "O", &ConfigDict))
 	return NULL;
 
+    if (!PyDict_Check(ConfigDict)) {
+	sprintf(error_msg, "get_sub_iterations: 1st argument [config_dict] "
+		"should be a dictionary\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
     if (!PyDict_Check(ConfigDict)) return NULL;
 
     return get_sub_iterations__ (ConfigDict);
+
+
+ err:
+    return NULL;
 }
 
 
 static PyObject *
 pyamg_GetResidualReduction(PyObject *self, PyObject *args)
 {
+    char error_msg[BUFSIZE];
     PyObject *ConfigDict = NULL;
 
     if (!PyArg_ParseTuple(args, "O", &ConfigDict))
 	return NULL;
 
+    if (!PyDict_Check(ConfigDict)) {
+	sprintf(error_msg, "get_residual_reduction: 1st argument [config_dict] "
+		"should be a dictionary\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
     if (!PyDict_Check(ConfigDict)) return NULL;
 
     return get_residual_reduction__ (ConfigDict);
+
+
+ err:
+    return NULL;
 }
 
 
 static PyObject *
 pyamg_GetExtIter(PyObject *self, PyObject *args)
 {
+    char error_msg[BUFSIZE];
     PyObject *ConfigDict = NULL;
 
     if (!PyArg_ParseTuple(args, "O", &ConfigDict))
 	return NULL;
 
+    if (!PyDict_Check(ConfigDict)) {
+	sprintf(error_msg, "get_ext_iter: 1st argument [config_dict] should "
+		"be a dictionary\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
     if (!PyDict_Check(ConfigDict)) return NULL;
 
     return get_ext_iter__ (ConfigDict);
+
+
+ err:
+    return NULL;
 }
 
 
 static PyObject *
 pyamg_PrintAdapOptions(PyObject *self, PyObject *args)
 {
+    char error_msg[BUFSIZE];
     PyObject *ConfigDict = NULL;
     PyObject *KwdsList = NULL;
 
     if (!PyArg_ParseTuple(args, "OO", &ConfigDict, &KwdsList))
 	return NULL;
 
+    if (!PyDict_Check(ConfigDict)) {
+	sprintf(error_msg, "print_adap_options: 1st argument [config_dict] should "
+		"be a dictionary\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
+    if (!PyList_Check(KwdsList)) {
+	sprintf(error_msg, "print_adap_options: 2nd argument [keywords] should "
+		"be a list\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
     if (!PyDict_Check(ConfigDict) || !PyList_Check(KwdsList)) return NULL;
 
     return print_adap_options__ (ConfigDict, KwdsList);
+
+
+ err:
+    return NULL;
 }
 
 
 static PyObject *
 pyamg_SU2_GetDim(PyObject *self, PyObject *args)
 {
+    char error_msg[BUFSIZE];
     PyObject *Filename = NULL;
 
     if (!PyArg_ParseTuple(args, "O", &Filename))
 	return NULL;
 
+    if (!PyString_Check(Filename)) {
+	sprintf(error_msg, "su2_get_dim: 1st argument [file_name] should be a "
+		"string\n");
+	handle_err_(PyExc_TypeError, error_msg, err);
+    }
+
     if (!PyString_Check(Filename)) return NULL;
 
     return su2_get_dim__ (Filename);
+
+
+ err:
+    Py_XDECREF(Filename);
+    return NULL;
 }
 
 

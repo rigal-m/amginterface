@@ -72,7 +72,8 @@ void *unflat_double_PyList(PyObject *list, npy_intp dim[2])
 
     if (NULL == EntityPtr) {
 	fprintf(stderr,
-		"Error: impossible to allocate %lu bytes of memory\n",
+		"unflat_double_PyList: impossible to allocate %lu bytes of "
+		"memory\n",
 		dim[0] * dim[1] * sizeof(int));
 	goto err;
     }
@@ -106,7 +107,8 @@ void *unflat_int_PyList(PyObject *list, npy_intp dim[2])
 
     if (NULL == EntityPtr) {
 	fprintf(stderr,
-		"Error: impossible to allocate %lu bytes of memory\n",
+		"unflat_int_PyList: impossible to allocate %lu bytes of "
+		"memory\n",
 		dim[0] * dim[1] * sizeof(int*));
 	goto err;
     }
@@ -143,7 +145,7 @@ void *unflat_PyList(PyObject *list, npy_intp dim[2], size_t siz)
 
     if (NULL == EntityPtr) {
 	fprintf(stderr,
-		"Error: impossible to allocate %lu bytes of memory\n",
+		"unflat_PyList: impossible to allocate %lu bytes of memory\n",
 		dim[0] * dim[1] * siz);
 	goto err;
     }

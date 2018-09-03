@@ -1,6 +1,8 @@
 #ifndef TOOLS_HEADER__
 #define TOOLS_HEADER__
 
+#define BUFSIZE 2048
+
 #define handle_err_(err_type, msg, stamp) \
     do {				  \
 	PyErr_SetString(err_type, msg);	  \
