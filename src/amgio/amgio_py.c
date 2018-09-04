@@ -465,7 +465,7 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	if (NULL == mesh) goto err;
 
 	if (NULL != dimension) {
-	    if (-1 == PyDict_SetItemString(mesh, "dimension", dimension))
+	    if (-1 == PyDict_SetItemString(mesh, "Dimension", dimension))
 		goto err;
 	    Py_DECREF(dimension);
 	}
@@ -480,42 +480,42 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	}
     
 	if (NULL != TriArray) {
-	    if (-1 == PyDict_SetItemString(mesh, "triangles", TriArray))
+	    if (-1 == PyDict_SetItemString(mesh, "Triangles", TriArray))
 		goto err;
 	}
     
 	if (NULL != TetArray) {
-	    if (-1 == PyDict_SetItemString(mesh, "tetrahedra", TetArray))
+	    if (-1 == PyDict_SetItemString(mesh, "Tetrahedra", TetArray))
 		goto err;
 	}
     
 	if (NULL != EdgArray) {
-	    if (-1 == PyDict_SetItemString(mesh, "edges", EdgArray))
+	    if (-1 == PyDict_SetItemString(mesh, "Edges", EdgArray))
 		goto err;
 	}
 
 	if (NULL != HexArray) {
-	    if (-1 == PyDict_SetItemString(mesh, "hexahedra", HexArray))
+	    if (-1 == PyDict_SetItemString(mesh, "Hexahedra", HexArray))
 		goto err;
 	}
 
 	if (NULL != QuaArray) {
-	    if (-1 == PyDict_SetItemString(mesh, "quadrilaterals", QuaArray))
+	    if (-1 == PyDict_SetItemString(mesh, "Quadrilaterals", QuaArray))
 		goto err;
 	}
 
 	if (NULL != PyrArray) {
-	    if (-1 == PyDict_SetItemString(mesh, "pyramids", PyrArray))
+	    if (-1 == PyDict_SetItemString(mesh, "Pyramids", PyrArray))
 		goto err;
 	}
 
 	if (NULL != PriArray) {
-	    if (-1 == PyDict_SetItemString(mesh, "prisms", PriArray))
+	    if (-1 == PyDict_SetItemString(mesh, "Prisms", PriArray))
 		goto err;
 	}
 
 	if (NULL != SolArray){ 
-	    if (-1 == PyDict_SetItemString(mesh, "solution", SolArray))
+	    if (-1 == PyDict_SetItemString(mesh, "Solution", SolArray))
 		goto err;
 	}
 
@@ -526,7 +526,7 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	}
 
 	if (NULL != MarkersList) {
-	    if (-1 == PyDict_SetItemString(mesh, "markers", MarkersList))
+	    if (-1 == PyDict_SetItemString(mesh, "Markers", MarkersList))
 		goto err;
 	    Py_DECREF(MarkersList);
 	}
@@ -534,7 +534,7 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 
 	item = PyList_New(0);
 	if (NULL == item) goto err;
-	if (-1 == PyDict_SetItemString(mesh, "corners", item)) goto err;
+	if (-1 == PyDict_SetItemString(mesh, "Corners", item)) goto err;
 	Py_DECREF(item);
 
 	item = PyDict_New();
@@ -636,7 +636,7 @@ int py_WriteMeshFromDict__ (PyObject *mesh, PyObject *mesh_name,
     /* We extract all the items from the mesh representation */
     int Dim = 3;
     
-    key = PyUnicode_FromString("triangles");
+    key = PyUnicode_FromString("Triangles");
     if (NULL == key) goto err;
     if (PyDict_Contains(mesh, key)) {
 	TriArray = PyDict_GetItem(mesh, key);
@@ -651,7 +651,7 @@ int py_WriteMeshFromDict__ (PyObject *mesh, PyObject *mesh_name,
     }
     Py_DECREF(key);
 
-    key = PyUnicode_FromString("tetrahedra");
+    key = PyUnicode_FromString("Tetrahedra");
     if (NULL == key) goto err;
     if (PyDict_Contains(mesh, key)) {
 	TetArray = PyDict_GetItem(mesh, key);
@@ -666,7 +666,7 @@ int py_WriteMeshFromDict__ (PyObject *mesh, PyObject *mesh_name,
     }
     Py_DECREF(key);
 
-    key = PyUnicode_FromString("edges");
+    key = PyUnicode_FromString("Edges");
     if (NULL == key) goto err;
     if (PyDict_Contains(mesh, key)) {
 	EdgArray = PyDict_GetItem(mesh, key);
@@ -681,7 +681,7 @@ int py_WriteMeshFromDict__ (PyObject *mesh, PyObject *mesh_name,
     }
     Py_DECREF(key);
 
-    key = PyUnicode_FromString("hexahedra");
+    key = PyUnicode_FromString("Hexahedra");
     if (NULL == key) goto err;
     if (PyDict_Contains(mesh, key)) {
 	EdgArray = PyDict_GetItem(mesh, key);
@@ -696,7 +696,7 @@ int py_WriteMeshFromDict__ (PyObject *mesh, PyObject *mesh_name,
     }
     Py_DECREF(key);
 
-    key = PyUnicode_FromString("quadrilaterals");
+    key = PyUnicode_FromString("Quadrilaterals");
     if (NULL == key) goto err;
     if (PyDict_Contains(mesh, key)) {
 	QuaArray = PyDict_GetItem(mesh, key);
@@ -711,7 +711,7 @@ int py_WriteMeshFromDict__ (PyObject *mesh, PyObject *mesh_name,
     }
     Py_DECREF(key);
 
-    key = PyUnicode_FromString("pyramids");
+    key = PyUnicode_FromString("Pyramids");
     if (NULL == key) goto err;
     if (PyDict_Contains(mesh, key)) {
 	PyrArray = PyDict_GetItem(mesh, key);
@@ -726,7 +726,7 @@ int py_WriteMeshFromDict__ (PyObject *mesh, PyObject *mesh_name,
     }
     Py_DECREF(key);
 
-    key = PyUnicode_FromString("prisms");
+    key = PyUnicode_FromString("Prisms");
     if (NULL == key) goto err;
     if (PyDict_Contains(mesh, key)) {
 	PriArray = PyDict_GetItem(mesh, key);
@@ -741,7 +741,7 @@ int py_WriteMeshFromDict__ (PyObject *mesh, PyObject *mesh_name,
     }
     Py_DECREF(key);
 
-    key = PyUnicode_FromString("solution");
+    key = PyUnicode_FromString("Solution");
     if (NULL == key) goto err;
     if (PyDict_Contains(mesh, key)) {
 	SolArray = PyDict_GetItem(mesh, key);
@@ -762,7 +762,7 @@ int py_WriteMeshFromDict__ (PyObject *mesh, PyObject *mesh_name,
     }
     Py_DECREF(key);
 
-    key = PyUnicode_FromString("markers");
+    key = PyUnicode_FromString("Markers");
     if (NULL == key) goto err;
     if (PyDict_Contains(mesh, key)) {
 	MarkersList = PyDict_GetItem(mesh, key);
@@ -774,7 +774,7 @@ int py_WriteMeshFromDict__ (PyObject *mesh, PyObject *mesh_name,
     }
     Py_DECREF(key);
 
-    key = PyUnicode_FromString("dimension");
+    key = PyUnicode_FromString("Dimension");
     if (NULL == key) goto err;
     if (PyDict_Contains(mesh, key)) {
 	value = PyDict_GetItem(mesh, key);
@@ -892,10 +892,10 @@ int py_WriteSolFromDict__ (PyObject *SolDict, PyObject *solution_name)
 
     if (NULL == solution_name_) goto err;
 
-    dim = PyDict_GetItemString(SolDict, "dimension");
+    dim = PyDict_GetItemString(SolDict, "Dimension");
     if (NULL == dim) goto err;
 
-    SolArray = (PyArrayObject *)PyDict_GetItemString(SolDict, "solution");
+    SolArray = (PyArrayObject *)PyDict_GetItemString(SolDict, "Solution");
     if (NULL == SolArray) goto err;
 
     VerArray = (PyArrayObject *)PyDict_GetItemString(SolDict, "xyz");
@@ -966,10 +966,10 @@ PyObject *py_CreateSensor__ (PyObject *SolDict, PyObject *sensor)
     Py_DECREF(VerArray);
     if (NULL == VerList) goto err;
 
-    dim = PyDict_GetItemString(SolDict, "dimension");
+    dim = PyDict_GetItemString(SolDict, "Dimension");
     if (NULL == dim) goto err;
 
-    SolArray = (PyArrayObject *)PyDict_GetItemString(SolDict, "solution");
+    SolArray = (PyArrayObject *)PyDict_GetItemString(SolDict, "Solution");
     if (NULL == SolArray) goto err;
 
     str = Py_BuildValue("s", "MACH");
@@ -1056,9 +1056,9 @@ PyObject *py_CreateSensor__ (PyObject *SolDict, PyObject *sensor)
     if (-1 == PyDict_SetItemString(SensorWrap, "solution_tag", SensorHeader)) goto err;
     if (-1 == PyDict_SetItemString(SensorWrap, "xyz",
     				   PyDict_GetItemString(SolDict, "xyz"))) goto err;
-    if (-1 == PyDict_SetItemString(SensorWrap, "dimension",
+    if (-1 == PyDict_SetItemString(SensorWrap, "Dimension",
     				   PyDict_GetItemString(SolDict, "dimension"))) goto err;
-    if (-1 == PyDict_SetItemString(SensorWrap, "solution", (PyObject *)SensorArray)) goto err;
+    if (-1 == PyDict_SetItemString(SensorWrap, "Solution", (PyObject *)SensorArray)) goto err;
 
     return SensorWrap;
 

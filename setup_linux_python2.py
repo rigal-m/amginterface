@@ -35,14 +35,14 @@ setup(
     ext_modules=[amgio],
     packages=[''],
     package_dir={'': '.'},
-    include_package_data=True,
-    # package_data={
-    #     '': ['amgiomodule.so', './amgio/dep/*']
-    # },
-    distclass=BinaryDistribution,
-    # install_requires=[
-    #     'numpy>=1.13.3',
-    # ],
+    # include_package_data=True,
+    # # package_data={
+    # #     '': ['amgiomodule.so', './amgio/dep/*']
+    # # },
+    # distclass=BinaryDistribution,
+    install_requires=[
+        'numpy>=1.13.3',
+    ],
     classifiers=[
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
