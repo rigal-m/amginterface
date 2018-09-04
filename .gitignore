@@ -64,4 +64,6 @@ pyamg-inria.macosx
 *_wrap.c
 
 build
+dist
+*.egg-info
 *.delete
