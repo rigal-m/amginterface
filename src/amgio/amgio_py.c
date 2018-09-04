@@ -284,13 +284,12 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	if (0 < NbrTet) {
 	    dim[0] = NbrTet;
 	    dim[1] = 5;
-	    /* TetPtr = unflat_PyList(TetList, dim, sizeof(int)); */
 	    TetPtr = unflat_int_PyList(TetList, dim);
 	    Py_DECREF(TetList);
-	    if (NULL == TetPtr) goto err_;
+	    if (NULL == TetPtr) goto err;
 	    TetArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, TetPtr);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)TetArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == TetArray) goto err_;
+	    if (NULL == TetArray) goto err;
 	}
 	else {
 	    Py_DECREF(TetList);
@@ -298,20 +297,19 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	    dim[1] = 0;
 	    TetArray = PyArray_SimpleNew(2, dim, NPY_INT);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)TetArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == TetArray) goto err_;
+	    if (NULL == TetArray) goto err;
 	}
 
 	/* Extracting the triangles from Python list as an array */
 	if (0 < NbrTri) {
 	    dim[0] = NbrTri;
 	    dim[1] = 4;
-	    /* TriPtr = unflat_PyList(TriList, dim, sizeof(int)); */
 	    TriPtr = unflat_int_PyList(TriList, dim);
 	    Py_DECREF(TriList);
-	    if (NULL == TriPtr) goto err_;
+	    if (NULL == TriPtr) goto err;
 	    TriArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, TriPtr);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)TriArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == TriArray) goto err_;
+	    if (NULL == TriArray) goto err;
 	}
 	else {
 	    Py_DECREF(TriList);
@@ -319,20 +317,19 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	    dim[1] = 0;
 	    TriArray = PyArray_SimpleNew(2, dim, NPY_INT);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)TriArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == TriArray) goto err_;
+	    if (NULL == TriArray) goto err;
 	}
     
 	/* Extracting the edges from Python list as an array */
 	if (0 < NbrEdg) {
 	    dim[0] = NbrEdg;
 	    dim[1] = 3;
-	    /* EdgPtr = unflat_PyList(EdgList, dim, sizeof(int)); */
 	    EdgPtr = unflat_int_PyList(EdgList, dim);
 	    Py_DECREF(EdgList);
-	    if (NULL == EdgPtr) goto err_;
+	    if (NULL == EdgPtr) goto err;
 	    EdgArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, EdgPtr);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)EdgArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == EdgArray) goto err_;
+	    if (NULL == EdgArray) goto err;
 	}
 	else {
 	    Py_DECREF(EdgList);
@@ -340,20 +337,19 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	    dim[1] = 0;
 	    EdgArray = PyArray_SimpleNew(2, dim, NPY_INT);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)EdgArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == EdgArray) goto err_;
+	    if (NULL == EdgArray) goto err;
 	}
 
 	/* Extracting the hexahedra from Python list as an array */
 	if (0 < NbrHex) {
 	    dim[0] = NbrHex;
 	    dim[1] = 9;
-	    /* HexPtr = unflat_PyList(HexList, dim, sizeof(int)); */
 	    HexPtr = unflat_int_PyList(HexList, dim);
 	    Py_DECREF(HexList);
-	    if (NULL == HexPtr) goto err_;
+	    if (NULL == HexPtr) goto err;
 	    HexArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, HexPtr);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)HexArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == HexArray) goto err_;
+	    if (NULL == HexArray) goto err;
 	}
 	else {
 	    Py_DECREF(HexList);
@@ -361,20 +357,19 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	    dim[1] = 0;
 	    HexArray = PyArray_SimpleNew(2, dim, NPY_INT);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)HexArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == HexArray) goto err_;
+	    if (NULL == HexArray) goto err;
 	}
 
 	/* Extracting the quadrilaterals from Python list as an array */
 	if (0 < NbrQua) {
 	    dim[0] = NbrQua;
 	    dim[1] = 5;
-	    /* QuaPtr = unflat_PyList(QuaList, dim, sizeof(int)); */
 	    QuaPtr = unflat_int_PyList(QuaList, dim);
 	    Py_DECREF(QuaList);
-	    if (NULL == QuaPtr) goto err_;
+	    if (NULL == QuaPtr) goto err;
 	    QuaArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, QuaPtr);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)QuaArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == QuaArray) goto err_;
+	    if (NULL == QuaArray) goto err;
 	}
 	else {
 	    Py_DECREF(QuaList);
@@ -382,20 +377,19 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	    dim[1] = 0;
 	    QuaArray = PyArray_SimpleNew(2, dim, NPY_INT);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)QuaArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == QuaArray) goto err_;
+	    if (NULL == QuaArray) goto err;
 	}
 
 	/* Extracting the pyramids from Python list as an array */
 	if (0 < NbrPyr) {
 	    dim[0] = NbrPyr;
 	    dim[1] = 6;
-	    /* PyrPtr = unflat_PyList(PyrList, dim, sizeof(int)); */
 	    PyrPtr = unflat_int_PyList(PyrList, dim);
 	    Py_DECREF(PyrList);
-	    if (NULL == PyrPtr) goto err_;
+	    if (NULL == PyrPtr) goto err;
 	    PyrArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, PyrPtr);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)PyrArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == PyrArray) goto err_;
+	    if (NULL == PyrArray) goto err;
 	}
 	else {
 	    Py_DECREF(PyrList);
@@ -403,20 +397,19 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	    dim[1] = 0;
 	    PyrArray = PyArray_SimpleNew(2, dim, NPY_INT);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)PyrArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == PyrArray) goto err_;
+	    if (NULL == PyrArray) goto err;
 	}
 
 	/* Extracting the prisms from Python list as an array */
 	if (0 < NbrPri) {
 	    dim[0] = NbrPri;
 	    dim[1] = 7;
-	    /* PriPtr = unflat_PyList(PriList, dim, sizeof(int)); */
 	    PriPtr = unflat_int_PyList(PriList, dim);
 	    Py_DECREF(PriList);
-	    if (NULL == PriPtr) goto err_;
+	    if (NULL == PriPtr) goto err;
 	    PriArray = PyArray_SimpleNewFromData(2, dim, NPY_INT, PriPtr);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)PriArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == PriArray) goto err_;
+	    if (NULL == PriArray) goto err;
 	}
 	else {
 	    Py_DECREF(PriList);
@@ -424,20 +417,19 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	    dim[1] = 0;
 	    PriArray = PyArray_SimpleNew(2, dim, NPY_INT);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)PriArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == PriArray) goto err_;
+	    if (NULL == PriArray) goto err;
 	}
     
 	/* Extracting the vertices from Python list as an array */
 	if (0 < NbrVer) {
 	    dim[0] = NbrVer;
 	    dim[1] = 3;
-	    /* VerPtr = unflat_PyList(VerList, dim, sizeof(double)); */
 	    VerPtr = unflat_double_PyList(VerList, dim);
 	    Py_DECREF(VerList);
-	    if (NULL == VerPtr) goto err_;
+	    if (NULL == VerPtr) goto err;
 	    VerArray = PyArray_SimpleNewFromData(2, dim, NPY_DOUBLE, VerPtr);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)VerArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == VerArray) goto err_;
+	    if (NULL == VerArray) goto err;
 	}
 	else {
 	    Py_DECREF(VerList);
@@ -445,20 +437,19 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	    dim[1] = 0;
 	    VerArray = PyArray_SimpleNew(2, dim, NPY_DOUBLE);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)VerArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == VerArray) goto err_;
+	    if (NULL == VerArray) goto err;
 	}
     
 	/* Extracting the solution from Python list as an array */
 	if (0 < NbrVer) {
 	    dim[0] = NbrVer;
 	    dim[1] = SolSiz;
-	    /* SolPtr = unflat_PyList(SolList, dim, sizeof(double)); */
 	    SolPtr = unflat_double_PyList(SolList, dim);
 	    Py_DECREF(SolList);
-	    if (NULL == SolPtr) goto err_;
+	    if (NULL == SolPtr) goto err;
 	    SolArray = PyArray_SimpleNewFromData(2, dim, NPY_DOUBLE, SolPtr);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)SolArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == SolArray) goto err_;
+	    if (NULL == SolArray) goto err;
 	}
 	else {
 	    Py_DECREF(SolList);
@@ -466,121 +457,105 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	    dim[1] = 0;
 	    SolArray = PyArray_SimpleNew(2, dim, NPY_INT);
 	    PyArray_ENABLEFLAGS((PyArrayObject *)SolArray, NPY_ARRAY_OWNDATA);
-	    if (NULL == SolArray) goto err_;
+	    if (NULL == SolArray) goto err;
 	}
 
 	/* Filling the mesh dictionary */
 	mesh = PyDict_New();
-	if (NULL == mesh) goto err_;
+	if (NULL == mesh) goto err;
 
 	if (NULL != dimension) {
 	    if (-1 == PyDict_SetItemString(mesh, "dimension", dimension))
-		goto err_;
+		goto err;
 	    Py_DECREF(dimension);
 	}
 	else {
 	    fprintf(stderr, "Error: no dimension was found\n");
-	    goto err_;
+	    goto err;
 	}
     
 	if (NULL != VerArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "xyz", VerArray))
-		goto err_;
-	    Py_DECREF(VerArray);
+		goto err;
 	}
     
 	if (NULL != TriArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "triangles", TriArray))
-		goto err_;
-	    Py_DECREF(TriArray);
+		goto err;
 	}
     
 	if (NULL != TetArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "tetrahedra", TetArray))
-		goto err_;
-	    Py_DECREF(TetArray);
+		goto err;
 	}
     
 	if (NULL != EdgArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "edges", EdgArray))
-		goto err_;
-	    Py_DECREF(EdgArray);
+		goto err;
 	}
 
 	if (NULL != HexArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "hexahedra", HexArray))
-		goto err_;
-	    Py_DECREF(HexArray);
+		goto err;
 	}
 
 	if (NULL != QuaArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "quadrilaterals", QuaArray))
-		goto err_;
-	    Py_DECREF(QuaArray);
+		goto err;
 	}
 
 	if (NULL != PyrArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "pyramids", PyrArray))
-		goto err_;
-	    Py_DECREF(PyrArray);
+		goto err;
 	}
 
 	if (NULL != PriArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "prisms", PriArray))
-		goto err_;
-	    Py_DECREF(PriArray);
+		goto err;
 	}
 
 	if (NULL != SolArray){ 
 	    if (-1 == PyDict_SetItemString(mesh, "solution", SolArray))
-		goto err_;
-	    Py_DECREF(SolArray);
+		goto err;
 	}
 
 	if (NULL != SolTagList) {
 	    if (-1 == PyDict_SetItemString(mesh, "solution_tag", SolTagList))
-		goto err_;
+		goto err;
 	    Py_DECREF(SolTagList);
 	}
 
 	if (NULL != MarkersList) {
 	    if (-1 == PyDict_SetItemString(mesh, "markers", MarkersList))
-		goto err_;
+		goto err;
 	    Py_DECREF(MarkersList);
 	}
 
 
 	item = PyList_New(0);
-	if (NULL == item) goto err_;
-	if (-1 == PyDict_SetItemString(mesh, "corners", item)) goto err_;
+	if (NULL == item) goto err;
+	if (-1 == PyDict_SetItemString(mesh, "corners", item)) goto err;
 	Py_DECREF(item);
-    
+
 	item = PyDict_New();
-	if (NULL == item) goto err_;
+	if (NULL == item) goto err;
 	int SolTag_len = PyList_Size(SolTagList);
 	for (int i = 0 ; i < SolTag_len ; ++i) {
 	    item_ = PyList_GetItem(SolTagList, i);
-	    if (NULL == item_) goto err_;
+	    if (NULL == item_) goto err;
 	    value = Py_BuildValue("i", i);
-	    if (NULL == value) goto err_;
-	    if (-1 == PyDict_SetItem(item, item_, value)) goto err_;
+	    if (NULL == value) goto err;
+	    if (-1 == PyDict_SetItem(item, item_, value)) goto err;
 	    Py_DECREF(item_);
 	}
 	if (-1 == PyDict_SetItemString(mesh, "id_solution_tag", item))
-	    goto err_;
+	    goto err;
 	Py_DECREF(item);
-
-	return mesh;
-
-
-    err_:
-	if (NULL != SolPtr) {
-	    free(SolPtr);
-	    SolPtr = NULL;
-	}
-
-	goto err;
+	
     }
+
+
+    return mesh;
 
 
  err:
@@ -595,6 +570,8 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
     Py_XDECREF(SolList);
     Py_XDECREF(SolTagList);
     Py_XDECREF(MarkersList);
+
+    Py_XDECREF(VerArray);
     Py_XDECREF(TetArray);
     Py_XDECREF(TriArray);
     Py_XDECREF(EdgArray);
@@ -602,52 +579,13 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
     Py_XDECREF(QuaArray);
     Py_XDECREF(PyrArray);
     Py_XDECREF(PriArray);
-    Py_XDECREF(VerArray);
+    
     Py_XDECREF(SolArray);
 
     Py_XDECREF(item);
     Py_XDECREF(mesh);
     Py_XDECREF(dimension);
 
-    if (NULL != TetPtr) {
-    	free(TetPtr);
-    	TetPtr = NULL;
-    }
-
-    if (NULL != TriPtr) {
-    	free(TriPtr);
-    	TriPtr = NULL;
-    }
-
-    if (NULL != EdgPtr) {
-    	free(EdgPtr);
-    	EdgPtr = NULL;
-    }
-
-    if (NULL != HexPtr) {
-    	free(HexPtr);
-    	HexPtr = NULL;
-    }
-
-    if (NULL != QuaPtr) {
-    	free(QuaPtr);
-    	QuaPtr = NULL;
-    }
-
-    if (NULL != PyrPtr) {
-    	free(PyrPtr);
-    	PyrPtr = NULL;
-    }
-
-    if (NULL != PriPtr) {
-    	free(PriPtr);
-    	PriPtr = NULL;
-    }
-
-    if (NULL != VerPtr) {
-    	free(VerPtr);
-    	VerPtr = NULL;
-    }
 
     return NULL;
 }
