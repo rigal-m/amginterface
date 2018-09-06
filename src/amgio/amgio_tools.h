@@ -13,4 +13,4 @@ PyObject *print_adap_options__ (PyObject *ConfigDict, PyObject *KwdsTuple);
 static PyObject *su2_mesh_readlines__ (PyObject *args);
 PyObject *su2_get_dim__ (PyObject *Filename);
 
-#endif // AMGIO TOOLS
+#endif /* AMGIO TOOLS */

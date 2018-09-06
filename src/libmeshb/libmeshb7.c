@@ -19,7 +19,7 @@
 
 #ifdef F77API
 
-// Add a final underscore to Fortran procedure names
+/* Add a final underscore to Fortran procedure names */
 #ifdef F77_NO_UNDER_SCORE
 #define NAMF77(c,f)  f
 #define APIF77(x)    x
@@ -28,13 +28,13 @@
 #define APIF77(x)    x ## _
 #endif
 
-// Pass parameters as pointers in Fortran
+/* Pass parameters as pointers in Fortran */
 #define VALF77(v)    *v
 #define TYPF77(t)    t*
 
 #else
 
-// Pass parameters as values in C
+/* Pass parameters as values in C */
 #define NAMF77(c,f)  c
 #define VALF77(v)    v
 #define TYPF77(t)    t
@@ -97,8 +97,8 @@
 #include <errno.h>
 #include <libmeshb7.h>
 
-// [Bruno] Using portable printf modifier from pstdint.h
-// (alternative: use "%zd" under Linux and "%Id" under Windows)
+/* [Bruno] Using portable printf modifier from pstdint.h */
+/* (alternative: use "%zd" under Linux and "%Id" under Windows) */
 
 #ifdef PRINTF_INT64_MODIFIER
 #define INT64_T_FMT "%" PRINTF_INT64_MODIFIER "d"
@@ -111,19 +111,19 @@
 #   endif
 #endif
 
-// [Bruno] Made asynchronous I/O optional
+/* [Bruno] Made asynchronous I/O optional */
 #ifdef WITH_AIO
 #include <aio.h>
 #else
 
-// Mockup aio library
+/* Mockup aio library */
 struct aiocb
 {
-   FILE   *aio_fildes;         // File descriptor
-   off_t  aio_offset;          // File offset
-   void   *aio_buf;            // Location of buffer
-   size_t aio_nbytes;          // Length of transfer
-   int    aio_lio_opcode;      // Operation to be performed
+   FILE   *aio_fildes;         /* File descriptor */
+   off_t  aio_offset;          /* File offset */
+   void   *aio_buf;            /* Location of buffer */
+   size_t aio_nbytes;          /* Length of transfer */
+   int    aio_lio_opcode;      /* Operation to be performed */
 };
 
 int aio_error( const struct aiocb * aiocbp )
@@ -131,7 +131,7 @@ int aio_error( const struct aiocb * aiocbp )
    return(aiocbp->aio_lio_opcode);
 }
 
-// Set the file position and read a block of data
+/* Set the file position and read a block of data */
 int aio_read( struct aiocb * aiocbp )
 {
    if( (fseek(aiocbp->aio_fildes, (off_t)aiocbp->aio_offset, SEEK_SET) == 0)
@@ -153,7 +153,7 @@ size_t aio_return( struct aiocb * aiocbp )
    return(aiocbp->aio_nbytes);
 }
 
-// Set the file position and write a block of data
+/* Set the file position and write a block of data */
 int aio_write( struct aiocb * aiocbp )
 {
    if( (fseek(aiocbp->aio_fildes, (off_t)aiocbp->aio_offset, SEEK_SET) == 0)
@@ -493,7 +493,7 @@ int64_t GmfOpenMesh(const char *FilNam, int mod, ...)
 
    MshIdx = (int64_t)msh;
 
-   // Save the current stack environment for longjmp
+   /* Save the current stack environment for longjmp */
    if(setjmp(msh->err) != 0)
    {
       if(msh->hdl != NULL)
@@ -506,14 +506,14 @@ int64_t GmfOpenMesh(const char *FilNam, int mod, ...)
       return(0);
    }
 
-   // Copy the FilNam into the structure
+   /* Copy the FilNam into the structure */
    if(strlen(FilNam) + 7 >= GmfStrSiz)
       longjmp(msh->err, -1);
 
    strcpy(msh->FilNam, FilNam);
 
-   // Store the opening mod (read or write) and guess
-   // the filetype (binary or ascii) depending on the extension
+   /* Store the opening mod (read or write) and guess */
+   /* the filetype (binary or ascii) depending on the extension */
    msh->mod = mod;
    msh->buf = (void *)msh->DblBuf;
    msh->FltBuf = (void *)msh->DblBuf;
@@ -530,7 +530,7 @@ int64_t GmfOpenMesh(const char *FilNam, int mod, ...)
    else
       longjmp(msh->err, -1);
 
-   // Open the file in the required mod and initialize the mesh structure
+   /* Open the file in the required mod and initialize the mesh structure */
    if(msh->mod == GmfRead)
    {
 
@@ -543,31 +543,31 @@ int64_t GmfOpenMesh(const char *FilNam, int mod, ...)
       PtrDim = va_arg(VarArg, int *);
       va_end(VarArg);
 
-      // Read the endian coding tag, the mesh version
-      // and the mesh dimension (mandatory kwd)
+      /* Read the endian coding tag, the mesh version */
+      /* and the mesh dimension (mandatory kwd) */
       if(msh->typ & Bin)
       {
-         // Create the name string and open the file
+         /* Create the name string and open the file */
 #ifdef WITH_AIO
-         // [Bruno] added binary flag (necessary under Windows)
+         /* [Bruno] added binary flag (necessary under Windows) */
          msh->FilDes = open(msh->FilNam, OPEN_READ_FLAGS, OPEN_READ_MODE);
 
          if(msh->FilDes <= 0)
             longjmp(msh->err, -1);
 
-         // Read the endian coding tag
+         /* Read the endian coding tag */
          if(read(msh->FilDes, &msh->cod, WrdSiz) != WrdSiz)
             longjmp(msh->err, -1);
 #else
-         // [Bruno] added binary flag (necessary under Windows)
+         /* [Bruno] added binary flag (necessary under Windows) */
          if(!(msh->hdl = fopen(msh->FilNam, "rb")))
             longjmp(msh->err, -1);
 
-         // Read the endian coding tag
+         /* Read the endian coding tag */
          safe_fread(&msh->cod, WrdSiz, 1, msh->hdl, msh->err);
 #endif
 
-         // Read the mesh version and the mesh dimension (mandatory kwd)
+         /* Read the mesh version and the mesh dimension (mandatory kwd) */
          if( (msh->cod != 1) && (msh->cod != 16777216) )
             longjmp(msh->err, -1);
 
@@ -589,7 +589,7 @@ int64_t GmfOpenMesh(const char *FilNam, int mod, ...)
       }
       else
       {
-         // Create the name string and open the file
+         /* Create the name string and open the file */
          if(!(msh->hdl = fopen(msh->FilNam, "rb")))
             longjmp(msh->err, -1);
 
@@ -627,7 +627,7 @@ int64_t GmfOpenMesh(const char *FilNam, int mod, ...)
       /* KW READING */
       /*------------*/
 
-      // Read the list of kw present in the file
+      /* Read the list of kw present in the file */
       if(!ScaKwdTab(msh))
          return(0);
 
@@ -642,7 +642,7 @@ int64_t GmfOpenMesh(const char *FilNam, int mod, ...)
 
       msh->cod = 1;
 
-      // Check if the user provided a valid version number and dimension
+      /* Check if the user provided a valid version number and dimension */
       va_start(VarArg, mod);
       msh->ver = va_arg(VarArg, int);
       msh->dim = va_arg(VarArg, int);
@@ -657,7 +657,7 @@ int64_t GmfOpenMesh(const char *FilNam, int mod, ...)
       if( (msh->dim != 2) && (msh->dim != 3) )
          longjmp(msh->err, -1);
 
-      // Create the mesh file
+      /* Create the mesh file */
       if(msh->typ & Bin) 
       {
          /* 
@@ -683,7 +683,7 @@ int64_t GmfOpenMesh(const char *FilNam, int mod, ...)
       /* KW WRITING */
       /*------------*/
 
-      // Write the mesh version and dimension
+      /* Write the mesh version and dimension */
       if(msh->typ & Asc)
       {
          fprintf(msh->hdl, "%s %d\n\n",
@@ -720,7 +720,7 @@ int GmfCloseMesh(int64_t MshIdx)
 
    RecBlk(msh, msh->buf, 0);
 
-   // In write down the "End" kw in write mode
+   /* In write down the "End" kw in write mode */
    if(msh->mod == GmfWrite)
    {
       if(msh->typ & Asc)
@@ -729,7 +729,7 @@ int GmfCloseMesh(int64_t MshIdx)
          GmfSetKwd(MshIdx, GmfEnd, 0);
    }
 
-   // Close the file and free the mesh structure
+   /* Close the file and free the mesh structure */
    if(msh->typ & Bin)
 #ifdef WITH_AIO
       close(msh->FilDes);
@@ -764,7 +764,7 @@ int64_t GmfStatKwd(int64_t MshIdx, int KwdCod, ...)
    if(!kwd->NmbLin)
       return(0);
 
-   // Read further arguments if this kw is a sol
+   /* Read further arguments if this kw is a sol */
    if(kwd->typ == SolKwd)
    {
       va_start(VarArg, KwdCod);
@@ -780,7 +780,7 @@ int64_t GmfStatKwd(int64_t MshIdx, int KwdCod, ...)
       for(i=0;i<kwd->NmbTyp;i++)
          TypTab[i] = kwd->TypTab[i];
 
-      // Add two extra paramaters for HO elements: degree and nmb nodes
+      /* Add two extra paramaters for HO elements: degree and nmb nodes */
       if(!strcmp("hr", GmfKwdFmt[ KwdCod ][2]) )
       {
          PtrDeg = va_arg(VarArg, int *);
@@ -832,7 +832,7 @@ int GmfSetKwd(int64_t MshIdx, int KwdCod, int64_t NmbLin, ...)
 
    kwd = &msh->KwdTab[ KwdCod ];
 
-   // Read further arguments if this kw is a solution
+   /* Read further arguments if this kw is a solution */
    if(!strcmp(GmfKwdFmt[ KwdCod ][2], "sr")
    || !strcmp(GmfKwdFmt[ KwdCod ][2], "hr"))
    {
@@ -844,7 +844,7 @@ int GmfSetKwd(int64_t MshIdx, int KwdCod, int64_t NmbLin, ...)
       for(i=0;i<kwd->NmbTyp;i++)
          kwd->TypTab[i] = TypTab[i];
 
-      // Add two extra paramaters for HO elements: degree and nmb nodes
+      /* Add two extra paramaters for HO elements: degree and nmb nodes */
       if(!strcmp("hr", GmfKwdFmt[ KwdCod ][2]))
       {
          kwd->deg = va_arg(VarArg, int);
@@ -854,7 +854,7 @@ int GmfSetKwd(int64_t MshIdx, int KwdCod, int64_t NmbLin, ...)
       va_end(VarArg);
    }
 
-   // Setup the kwd info
+   /* Setup the kwd info */
    ExpFmt(msh, KwdCod);
 
    if(!kwd->typ)
@@ -864,7 +864,7 @@ int GmfSetKwd(int64_t MshIdx, int KwdCod, int64_t NmbLin, ...)
    else
       kwd->NmbLin = NmbLin;
 
-   // Store the next kwd position in binary file
+   /* Store the next kwd position in binary file */
    if( (msh->typ & Bin) && msh->NexKwdPos )
    {
       CurPos = GetFilPos(msh);
@@ -878,7 +878,7 @@ int GmfSetKwd(int64_t MshIdx, int KwdCod, int64_t NmbLin, ...)
          return(0);
    }
 
-   // Write the header
+   /* Write the header */
    if(msh->typ & Asc)
    {
       fprintf(msh->hdl, "\n%s\n", GmfKwdFmt[ KwdCod ][0]);
@@ -886,7 +886,7 @@ int GmfSetKwd(int64_t MshIdx, int KwdCod, int64_t NmbLin, ...)
       if(kwd->typ != InfKwd)
          fprintf(msh->hdl, INT64_T_FMT"\n", kwd->NmbLin);
 
-      // In case of solution field, write the extended header
+      /* In case of solution field, write the extended header */
       if(kwd->typ == SolKwd)
       {
          fprintf(msh->hdl, "%d ", kwd->NmbTyp);
@@ -917,7 +917,7 @@ int GmfSetKwd(int64_t MshIdx, int KwdCod, int64_t NmbLin, ...)
             RecDblWrd(msh, (unsigned char *)&kwd->NmbLin);
       }
 
-      // In case of solution field, write the extended header at once
+      /* In case of solution field, write the extended header at once */
       if(kwd->typ == SolKwd)
       {
          RecWrd(msh, (unsigned char *)&kwd->NmbTyp);
@@ -933,10 +933,10 @@ int GmfSetKwd(int64_t MshIdx, int KwdCod, int64_t NmbLin, ...)
       }
    }
 
-   // Reset write buffer position
+   /* Reset write buffer position */
    msh->pos = 0;
 
-   // Compute the total file size and check if it crosses the 2GB threshold
+   /* Compute the total file size and check if it crosses the 2GB threshold */
    msh->siz += kwd->NmbLin * kwd->NmbWrd * WrdSiz;
 
    return(1);
@@ -959,11 +959,11 @@ int NAMF77(GmfGetLin, gmfgetlin)(TYPF77(int64_t)MshIdx, TYPF77(int)KwdCod, ...)
    if( (VALF77(KwdCod) < 1) || (VALF77(KwdCod) > GmfMaxKwd) )
       return(0);
 
-   // Save the current stack environment for longjmp
+   /* Save the current stack environment for longjmp */
    if(setjmp(msh->err) != 0)
       return(0);
 
-   // Start decoding the arguments
+   /* Start decoding the arguments */
    va_start(VarArg, KwdCod);
 
    switch(kwd->typ)
@@ -998,7 +998,7 @@ int NAMF77(GmfGetLin, gmfgetlin)(TYPF77(int64_t)MshIdx, TYPF77(int)KwdCod, ...)
                   }
                   else
                   {
-                     // [Bruno] %ld -> INT64_T_FMT
+                     /* [Bruno] %ld -> INT64_T_FMT */
                      safe_fscanf(msh->hdl, INT64_T_FMT,
                               va_arg(VarArg, int64_t *), msh->err);
                   }
@@ -1024,7 +1024,7 @@ int NAMF77(GmfGetLin, gmfgetlin)(TYPF77(int64_t)MshIdx, TYPF77(int)KwdCod, ...)
                   else
                      ScaDblWrd(msh, (unsigned char *)va_arg(VarArg, int64_t *));
                else if(kwd->fmt[i] == 'c')
-                  // [Bruno] added error control
+                  /* [Bruno] added error control */
                   safe_fread(va_arg(VarArg, char *), WrdSiz, FilStrSiz, msh->hdl, msh->err);
          }
       }break;
@@ -1079,7 +1079,7 @@ int NAMF77(GmfSetLin, gmfsetlin)(TYPF77(int64_t) MshIdx, TYPF77(int) KwdCod, ...
    if( ( VALF77(KwdCod) < 1) || ( VALF77(KwdCod) > GmfMaxKwd) )
       return(0);
 
-   // Start decoding the arguments
+   /* Start decoding the arguments */
    va_start(VarArg, KwdCod);
 
    if(kwd->typ != SolKwd)
@@ -1105,7 +1105,7 @@ int NAMF77(GmfSetLin, gmfsetlin)(TYPF77(int64_t) MshIdx, TYPF77(int) KwdCod, ...
                   fprintf(msh->hdl, "%d ", VALF77(va_arg(VarArg, TYPF77(int))));
                else
                {
-                  // [Bruno] %ld -> INT64_T_FMT
+                  /* [Bruno] %ld -> INT64_T_FMT */
                   fprintf( msh->hdl, INT64_T_FMT " ",
                            VALF77(va_arg(VarArg, TYPF77(int64_t))));
                }
@@ -1214,7 +1214,7 @@ int GmfCpyLin(int64_t InpIdx, int64_t OutIdx, int KwdCod)
    GmfMshSct   *InpMsh = (GmfMshSct *)InpIdx, *OutMsh = (GmfMshSct *)OutIdx;
    KwdSct      *kwd = &InpMsh->KwdTab[ KwdCod ];
 
-   // Save the current stack environment for longjmp
+   /* Save the current stack environment for longjmp */
    if(setjmp(InpMsh->err) != 0)
       return(0);
 
@@ -1339,7 +1339,7 @@ int GmfGetLinTab( int64_t  MshIdx, int  KwdCod,
    if( (KwdCod < 1) || (KwdCod > GmfMaxKwd) )
       return(0);
 
-   // Save the current stack environment for longjmp
+   /* Save the current stack environment for longjmp */
    if(setjmp(msh->err) != 0)
       return(0);
 
@@ -1481,7 +1481,7 @@ int GmfSetLinTab( int64_t  MshIdx, int KwdCod,
 }
 
 
-// [Bruno] Made asynchronous I/O optional
+/* [Bruno] Made asynchronous I/O optional */
 #ifndef WITHOUT_AIO
 
 /*----------------------------------------------------------------------------*/
@@ -1520,7 +1520,7 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
    char        *UsrArg = NULL;
 #endif
 
-   // Save the current stack environment for longjmp
+   /* Save the current stack environment for longjmp */
    if(setjmp(msh->err) != 0)
    {
       if(BckBuf)
@@ -1532,32 +1532,32 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
       return(0);
    }
 
-   // Check mesh and keyword
+   /* Check mesh and keyword */
    if( (VALF77(KwdCod) < 1) || (VALF77(KwdCod) > GmfMaxKwd) || !kwd->NmbLin )
       return(0);
 
-   // Make sure it's not a simple information keyword
+   /* Make sure it's not a simple information keyword */
    if( (kwd->typ != RegKwd) && (kwd->typ != SolKwd) )
       return(0);
 
-   // Check user's bounds
+   /* Check user's bounds */
    if( (FilBegIdx < 1) || (FilBegIdx > FilEndIdx) || (FilEndIdx > kwd->NmbLin) )
       return(0);
 
-   // Compute the number of lines to be read
+   /* Compute the number of lines to be read */
    UsrNmbLin = FilEndIdx - FilBegIdx + 1;
 
-   // Get the renumbering map if any
+   /* Get the renumbering map if any */
    if(VALF77(MapTyp) == GmfInt)
       IntMapTab = (int *)MapTab;
    else if(VALF77(MapTyp) == GmfLong)
       LngMapTab = (int64_t *)MapTab;
 
-   // Start decoding the arguments
+   /* Start decoding the arguments */
    va_start(VarArg, prc);
    LinSiz = 0;
 
-   // Get the user's preporcessing procedure and argument adresses, if any
+   /* Get the user's preporcessing procedure and argument adresses, if any */
 #ifdef F77API
    if(prc)
    {
@@ -1575,18 +1575,18 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
    }
 #endif
 
-   // Get the user's data type and pointers to first
-   // and last adresses in order to compute the stride
+   /* Get the user's data type and pointers to first */
+   /* and last adresses in order to compute the stride */
    if(kwd->typ == RegKwd)
    {
       for(i=0;i<kwd->SolSiz;i++)
       {
-         // Get the type from the variable arguments
+         /* Get the type from the variable arguments */
          UsrTyp[i] = VALF77(va_arg(VarArg, TYPF77(int)));;
 
-         // If a table is given, read its size in the next argument
-         // and automatically fill the pointer table by incrementing
-         // as many times the base user address
+         /* If a table is given, read its size in the next argument */
+         /* and automatically fill the pointer table by incrementing */
+         /* as many times the base user address */
          if(UsrTyp[i] == GmfIntTab)
          {
             RepCnt = VALF77(va_arg(VarArg, TYPF77(int)));
@@ -1600,7 +1600,7 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
          else
             RepCnt = 0;
 
-         // Get the begin and end pointers from the variable arguments
+         /* Get the begin and end pointers from the variable arguments */
          UsrDat[i] = UsrBas[i] = va_arg(VarArg, char *);
          EndUsrDat = va_arg(VarArg, char *);
 
@@ -1609,7 +1609,7 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
          else
             UsrLen[i] = 0;
 
-         // Replicate the table data type and increment the base address
+         /* Replicate the table data type and increment the base address */
          if(RepCnt >= 2)
          {
             for(j=i+1; j<i+RepCnt; j++)
@@ -1625,7 +1625,7 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
    }
    else if(kwd->typ == SolKwd)
    {
-      // Get the type, begin and end pointers from the variable arguments
+      /* Get the type, begin and end pointers from the variable arguments */
       UsrTyp[0] = VALF77(va_arg(VarArg, TYPF77(int)));;
       UsrDat[0] = UsrBas[0] = va_arg(VarArg, char *);
       EndUsrDat = va_arg(VarArg, char *);
@@ -1635,8 +1635,8 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
       else
          UsrLen[0] = 0;
 
-      // Solutions use only on set of type/begin/end pointers
-      // and the base adress is incremented for each entry
+      /* Solutions use only on set of type/begin/end pointers */
+      /* and the base adress is incremented for each entry */
       for(i=1;i<kwd->SolSiz;i++)
       {
          UsrTyp[i] = UsrTyp[0];
@@ -1647,7 +1647,7 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
    else
       return(0);
 
-   // Get the file's data type
+   /* Get the file's data type */
    for(i=0;i<kwd->SolSiz;i++)
    {
       if(kwd->fmt[i] == 'r')
@@ -1661,22 +1661,22 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
          else
             FilTyp[i] = GmfLong;
 
-      // Compute the file stride
+      /* Compute the file stride */
       LinSiz += SizTab[ FilTyp[i] ];
    }
 
    va_end(VarArg);
 
-   // Move file pointer to the keyword data
+   /* Move file pointer to the keyword data */
    SetFilPos(msh, kwd->pos);
 
-   // Read the whole kwd data
+   /* Read the whole kwd data */
    if(msh->typ & Asc)
    {
       for(i=1;i<=FilEndIdx;i++)
          for(j=0;j<kwd->SolSiz;j++)
          {
-            // Reorder HO nodes on the fly
+            /* Reorder HO nodes on the fly */
             if(kwd->OrdTab && (j != kwd->SolSiz-1))
                k = kwd->OrdTab[j];
             else
@@ -1684,14 +1684,14 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
 
             safe_fscanf(msh->hdl, StrTab[ UsrTyp[k] ], UsrDat[k], msh->err);
 
-            // Move to the next user's data line only when the desired
-            // begining position in the ascii file has been reached since
-            // we cannot move directly to an arbitrary position
+            /* Move to the next user's data line only when the desired */
+            /* begining position in the ascii file has been reached since */
+            /* we cannot move directly to an arbitrary position */
             if(i >= FilBegIdx)
                UsrDat[k] += UsrLen[k];
          }
 
-      // Call the user's preprocessing procedure
+      /* Call the user's preprocessing procedure */
       if(UsrPrc)
 #ifdef F77API
          CalF77Prc(1, kwd->NmbLin, UsrPrc, NmbArg, ArgTab);
@@ -1701,14 +1701,14 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
    }
    else
    {
-      // Allocate both front and back buffers
+      /* Allocate both front and back buffers */
       if(!(BckBuf = malloc((size_t)BufSiz * (size_t)LinSiz)))
          return(0);
 
       if(!(FrtBuf = malloc((size_t)BufSiz * (size_t)LinSiz)))
          return(0);
 
-      // Setup the ansynchonous parameters
+      /* Setup the ansynchonous parameters */
       memset(&aio, 0, sizeof(struct aiocb));
       FilBuf = BckBuf;
       aio.aio_buf = BckBuf;
@@ -1721,11 +1721,11 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
 
       NmbBlk = UsrNmbLin / BufSiz;
 
-      // Loop over N+1 blocks
+      /* Loop over N+1 blocks */
       for(b=0;b<=NmbBlk+1;b++)
       {
-         // Wait for the previous block read to complete except
-         // for the first loop interation
+         /* Wait for the previous block read to complete except */
+         /* for the first loop interation */
          if(b)
          {
             while(aio_error(&aio) == EINPROGRESS);
@@ -1743,10 +1743,10 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
               exit(1);
             }
 
-            // Increment the reading position
+            /* Increment the reading position */
             aio.aio_offset += aio.aio_nbytes;
 
-            // and swap the buffers
+            /* and swap the buffers */
             if(aio.aio_buf == BckBuf)
             {
                aio.aio_buf = FrtBuf;
@@ -1759,10 +1759,10 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
             }
          }
  
-         // Read a chunk of data except for the last loop interarion
+         /* Read a chunk of data except for the last loop interarion */
          if(b <= NmbBlk)
          {
-            // The last block is shorter than the others
+            /* The last block is shorter than the others */
             if(b == NmbBlk)
                BlkNmbLin = UsrNmbLin - b * BufSiz;
             else
@@ -1787,11 +1787,11 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
             }
          }
 
-         // Then decode the block and store it in the user's data structure
-         // except for the first loop interation
+         /* Then decode the block and store it in the user's data structure */
+         /* except for the first loop interation */
          if(b)
          {
-            // The last block is shorter than the others
+            /* The last block is shorter than the others */
             if(b-1 == NmbBlk)
                BlkNmbLin = UsrNmbLin - (b-1) * BufSiz;
             else
@@ -1810,7 +1810,7 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
                   if(msh->cod != 1)
                      SwpWrd(FilPos, SizTab[ FilTyp[j] ]);
 
-                  // Reorder HO nodes on the fly
+                  /* Reorder HO nodes on the fly */
                   if(kwd->OrdTab && (j != kwd->SolSiz-1))
                      k = kwd->OrdTab[j];
                   else
@@ -1888,7 +1888,7 @@ int NAMF77(GmfGetBlock, gmfgetblock)(  TYPF77(int64_t) MshIdx,
                }
             }
 
-            // Call the user's preprocessing procedure
+            /* Call the user's preprocessing procedure */
             if(UsrPrc)
 #ifdef F77API
                CalF77Prc(BlkBegIdx, BlkEndIdx, UsrPrc, NmbArg, ArgTab);
@@ -1942,7 +1942,7 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
    char        *UsrArg = NULL;
 #endif
 
-   // Save the current stack environment for longjmp
+   /* Save the current stack environment for longjmp */
    if(setjmp(msh->err) != 0)
    {
       if(FilBuf)
@@ -1951,37 +1951,37 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
       return(0);
    }
 
-   // Check mesh and keyword
+   /* Check mesh and keyword */
    if( (VALF77(KwdCod) < 1) || (VALF77(KwdCod) > GmfMaxKwd) || !kwd->NmbLin )
       return(0);
 
-   // Make sure it's not a simple information keyword
+   /* Make sure it's not a simple information keyword */
    if( (kwd->typ != RegKwd) && (kwd->typ != SolKwd) )
       return(0);
 
-   // Temporarily overwright the given begin and end values
-   // as arbitrary position block write is not yet implemented
+   /* Temporarily overwright the given begin and end values */
+   /* as arbitrary position block write is not yet implemented */
    FilBegIdx = 1;
    FilEndIdx = kwd->NmbLin;
 
-   // Check user's bounds
+   /* Check user's bounds */
    if( (FilBegIdx < 1) || (FilBegIdx > FilEndIdx) || (FilEndIdx > kwd->NmbLin) )
       return(0);
 
-   // Compute the number of lines to be written
+   /* Compute the number of lines to be written */
    UsrNmbLin = FilEndIdx - FilBegIdx + 1;
 
-   // Get the renumbering map if any
+   /* Get the renumbering map if any */
    if(VALF77(MapTyp) == GmfInt)
       IntMapTab = (int *)MapTab;
    else if(VALF77(MapTyp) == GmfLong)
       LngMapTab = (int64_t *)MapTab;
 
-   // Start decoding the arguments
+   /* Start decoding the arguments */
    va_start(VarArg, prc);
    LinSiz = 0;
 
-   // Get the user's postprocessing procedure and argument adresses, if any
+   /* Get the user's postprocessing procedure and argument adresses, if any */
 #ifdef F77API
    if(prc)
    {
@@ -1999,18 +1999,18 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
    }
 #endif
 
-   // Get the user's data type and pointers to first
-   // and last adresses in order to compute the stride
+   /* Get the user's data type and pointers to first */
+   /* and last adresses in order to compute the stride */
    if(kwd->typ == RegKwd)
    {
       for(i=0;i<kwd->SolSiz;i++)
       {
-         // Get the type from the variable arguments
+         /* Get the type from the variable arguments */
          UsrTyp[i] = VALF77(va_arg(VarArg, TYPF77(int)));
 
-         // If a table is given, read its size in the next argument
-         // and automatically fill the pointer table by incrementing
-         // as many times the base user address
+         /* If a table is given, read its size in the next argument */
+         /* and automatically fill the pointer table by incrementing */
+         /* as many times the base user address */
          if(UsrTyp[i] == GmfIntTab)
          {
             RepCnt = VALF77(va_arg(VarArg, TYPF77(int)));
@@ -2024,7 +2024,7 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
          else
             RepCnt = 0;
 
-         // Get the begin and end pointers from the variable arguments
+         /* Get the begin and end pointers from the variable arguments */
          UsrDat[i] = UsrBas[i] = va_arg(VarArg, char *);
          EndUsrDat = va_arg(VarArg, char *);
 
@@ -2033,7 +2033,7 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
          else
             UsrLen[i] = 0;
 
-         // Replicate the table data type and increment the base address
+         /* Replicate the table data type and increment the base address */
          if(RepCnt >= 2)
          {
             for(j=i+1; j<i+RepCnt; j++)
@@ -2049,7 +2049,7 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
    }
    else if(kwd->typ == SolKwd)
    {
-         // Get the type, begin and end pointers from the variable arguments
+         /* Get the type, begin and end pointers from the variable arguments */
       UsrTyp[0] = VALF77(va_arg(VarArg, TYPF77(int)));;
       UsrDat[0] = UsrBas[0] = va_arg(VarArg, char *);
       EndUsrDat = va_arg(VarArg, char *);
@@ -2059,8 +2059,8 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
       else
          UsrLen[0] = 0;
 
-      // Solutions use only on set of type/begin/end pointers
-      // and the base adress is incremented for each entry
+      /* Solutions use only on set of type/begin/end pointers */
+      /* and the base adress is incremented for each entry */
       for(i=1;i<kwd->SolSiz;i++)
       {
          UsrTyp[i] = UsrTyp[0];
@@ -2071,7 +2071,7 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
    else
       return(0);
 
-   // Get the file's data type
+   /* Get the file's data type */
    for(i=0;i<kwd->SolSiz;i++)
    {
       if(kwd->fmt[i] == 'r')
@@ -2085,13 +2085,13 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
          else
             FilTyp[i] = GmfLong;
 
-      // Compute the file stride
+      /* Compute the file stride */
       LinSiz += SizTab[ FilTyp[i] ];
    }
 
    va_end(VarArg);
 
-   // Write the whole kwd data
+   /* Write the whole kwd data */
    if(msh->typ & Asc)
    {
       if(UsrPrc)
@@ -2135,14 +2135,14 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
    }
    else
    {
-      // Allocate the front and back buffers
+      /* Allocate the front and back buffers */
       if(!(BckBuf = malloc((size_t)BufSiz * (size_t)LinSiz)))
          return(0);
 
       if(!(FrtBuf = malloc((size_t)BufSiz * (size_t)LinSiz)))
          return(0);
 
-      // Setup the asynchronous parameters
+      /* Setup the asynchronous parameters */
       memset(&aio, 0, sizeof(struct aiocb));
       FilBuf = BckBuf;
 #ifdef WITH_AIO
@@ -2154,11 +2154,11 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
 
       NmbBlk = UsrNmbLin / BufSiz;
 
-      // Loop over N+1 blocks
+      /* Loop over N+1 blocks */
       for(b=0;b<=NmbBlk+1;b++)
       {
-         // Launch an asynchronous block write
-         // except for the first loop iteration
+         /* Launch an asynchronous block write */
+         /* except for the first loop iteration */
          if(b)
          {
             aio.aio_nbytes = BlkNmbLin * LinSiz;
@@ -2178,10 +2178,10 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
             }
          }
 
-         // Parse the block data except at the last loop iteration
+         /* Parse the block data except at the last loop iteration */
          if(b<=NmbBlk)
          {
-            // The last block is shorter
+            /* The last block is shorter */
             if(b == NmbBlk)
                BlkNmbLin = UsrNmbLin - b * BufSiz;
             else
@@ -2191,7 +2191,7 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
             BlkBegIdx = BlkEndIdx+1;
             BlkEndIdx += BlkNmbLin;
 
-            // Call user's preprocessing first
+            /* Call user's preprocessing first */
             if(UsrPrc)
 #ifdef F77API
                CalF77Prc(BlkBegIdx, BlkEndIdx, UsrPrc, NmbArg, ArgTab);
@@ -2199,7 +2199,7 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
                UsrPrc(BlkBegIdx, BlkEndIdx, UsrArg);
 #endif
 
-            // Then copy it's data to the file buffer
+            /* Then copy it's data to the file buffer */
             for(i=0;i<BlkNmbLin;i++)
             {
                OldIdx++;
@@ -2279,7 +2279,7 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
             }
          }
 
-         // Wait for write completion execpt at the first loop iteration
+         /* Wait for write completion execpt at the first loop iteration */
          if(b)
          {
             while(aio_error(&aio) == EINPROGRESS);
@@ -2297,11 +2297,11 @@ int NAMF77(GmfSetBlock, gmfsetblock)(  TYPF77(int64_t) MshIdx,
               exit(1);
             }
 
-            // Move the write position
+            /* Move the write position */
             aio.aio_offset += aio.aio_nbytes;
          }
 
-         // Swap the buffers
+         /* Swap the buffers */
          if(FilBuf == BckBuf)
          {
             aio.aio_buf = BckBuf;
@@ -2338,7 +2338,7 @@ int GmfSetHONodesOrdering(int64_t MshIdx, int KwdCod, int *BasTab, int *OrdTab)
 
    kwd = &msh->KwdTab[ KwdCod ];
 
-   // Find the Bezier indices dimension according to the element's kind
+   /* Find the Bezier indices dimension according to the element's kind */
    switch(KwdCod)
    {
       case GmfEdgesP2 :          NmbNod =  3; NmbCrd = 1; break;
@@ -2358,14 +2358,14 @@ int GmfSetHONodesOrdering(int64_t MshIdx, int KwdCod, int *BasTab, int *OrdTab)
       default : return(0);
    }
 
-   // Free and rebuild the mapping table it there were already one
+   /* Free and rebuild the mapping table it there were already one */
    if(kwd->OrdTab)
       free(kwd->OrdTab);
 
    if(!(kwd->OrdTab = malloc(NmbNod * sizeof(int))))
       return(0);
 
-   // Find the corresponding Bezier coordinates from the source table
+   /* Find the corresponding Bezier coordinates from the source table */
    for(i=0;i<NmbNod;i++)
    {
       for(j=0;j<NmbNod;j++)
@@ -2384,8 +2384,8 @@ int GmfSetHONodesOrdering(int64_t MshIdx, int KwdCod, int *BasTab, int *OrdTab)
       }
    }
 
-   //for(i=0;i<NmbNod;i++)
-   //   printf("%d : %d\n",i,kwd->OrdTab[i]);
+   /* for(i=0;i<NmbNod;i++) */
+     /* printf("%d : %d\n",i,kwd->OrdTab[i]); */
 
    return(1);
 }
@@ -2459,14 +2459,14 @@ static int ScaKwdTab(GmfMshSct *msh)
 
    if(msh->typ & Asc)
    {
-      // Scan each string in the file until the end
+      /* Scan each string in the file until the end */
       while(fscanf(msh->hdl, "%s", str) != EOF)
       {
-         // Fast test in order to reject quickly the numeric values
+         /* Fast test in order to reject quickly the numeric values */
          if(isalpha(str[0]))
          {
-            // Search which kwd code this string is associated with, then get its
-            // header and save the curent position in file (just before the data)
+            /* Search which kwd code this string is associated with, then get its */
+            /* header and save the curent position in file (just before the data) */
             for(KwdCod=1; KwdCod<= GmfMaxKwd; KwdCod++)
                if(!strcmp(str, GmfKwdFmt[ KwdCod ][0]))
                {
@@ -2480,24 +2480,24 @@ static int ScaKwdTab(GmfMshSct *msh)
    }
    else
    {
-      // Get file size
+      /* Get file size */
       EndPos = GetFilSiz(msh);
 
-      // Jump through kwd positions in the file
+      /* Jump through kwd positions in the file */
       do
       {
-         // Get the kwd code and the next kwd position
+         /* Get the kwd code and the next kwd position */
          ScaWrd(msh, ( char *)&KwdCod);
          NexPos = GetPos(msh);
 
          if(NexPos > EndPos)
             longjmp(msh->err, -1);
 
-         // Check if this kwd belongs to this mesh version
+         /* Check if this kwd belongs to this mesh version */
          if( (KwdCod >= 1) && (KwdCod <= GmfMaxKwd) )
             ScaKwdHdr(msh, KwdCod);
 
-         // Go to the next kwd
+         /* Go to the next kwd */
          if(NexPos && !(SetFilPos(msh, NexPos)))
             longjmp(msh->err, -1);
       }while(NexPos && (KwdCod != GmfEnd));
@@ -2540,7 +2540,7 @@ static void ScaKwdHdr(GmfMshSct *msh, int KwdCod)
          for(i=0;i<kwd->NmbTyp;i++)
             safe_fscanf(msh->hdl, "%d", &kwd->TypTab[i], msh->err);
 
-         // Scan two extra fields for HO solutions: deg and nmb Nodes
+         /* Scan two extra fields for HO solutions: deg and nmb Nodes */
          if(!strcmp("hr", GmfKwdFmt[ KwdCod ][2]))
          {
             safe_fscanf(msh->hdl, "%d", &kwd->deg, msh->err);
@@ -2560,7 +2560,7 @@ static void ScaKwdHdr(GmfMshSct *msh, int KwdCod)
          for(i=0;i<kwd->NmbTyp;i++)
             ScaWrd(msh, (unsigned char *)&kwd->TypTab[i]);
 
-         // Scan two extra fields for HO solutions: deg and nmb Nodes
+         /* Scan two extra fields for HO solutions: deg and nmb Nodes */
          if(!strcmp("hr", GmfKwdFmt[ KwdCod ][2]))
          {
             ScaWrd(msh, (unsigned char *)&kwd->deg);
@@ -2590,7 +2590,7 @@ static void ExpFmt(GmfMshSct *msh, int KwdCod)
    const char  *InpFmt = GmfKwdFmt[ KwdCod ][2];
    KwdSct      *kwd = &msh->KwdTab[ KwdCod ];
 
-   // Set the kwd's type
+   /* Set the kwd's type */
    if(!strlen(GmfKwdFmt[ KwdCod ][1]))
       kwd->typ = InfKwd;
    else if( !strcmp(InpFmt, "sr") || !strcmp(InpFmt, "hr") )
@@ -2598,7 +2598,7 @@ static void ExpFmt(GmfMshSct *msh, int KwdCod)
    else
       kwd->typ = RegKwd;
 
-   // Get the solution-field's size
+   /* Get the solution-field's size */
    if(kwd->typ == SolKwd)
       for(i=0;i<kwd->NmbTyp;i++)
          switch(kwd->TypTab[i])
@@ -2609,7 +2609,7 @@ static void ExpFmt(GmfMshSct *msh, int KwdCod)
             case GmfMat    : TmpSiz += msh->dim * msh->dim; break;
          }
 
-   // Scan each character from the format string
+   /* Scan each character from the format string */
    i = kwd->SolSiz = kwd->NmbWrd = 0;
 
    while(i < (int)strlen(InpFmt))
@@ -2652,7 +2652,7 @@ static void ExpFmt(GmfMshSct *msh, int KwdCod)
          case 'r' : kwd->NmbWrd += FltWrd;break;
       }
 
-   // HO solution: duplicate the format as many times as the number of nodes
+   /* HO solution: duplicate the format as many times as the number of nodes */
    if( !strcmp(InpFmt, "hr") && (kwd->NmbNod > 1) )
    {
       for(i=1;i<=kwd->NmbNod;i++)
@@ -2728,7 +2728,7 @@ static int64_t GetPos(GmfMshSct *msh)
 
 static void RecWrd(GmfMshSct *msh, const void *wrd)
 {
-   // [Bruno] added error control
+   /* [Bruno] added error control */
 #ifdef WITH_AIO
    if(write(msh->FilDes, wrd, WrdSiz) != WrdSiz)
 #else
@@ -2744,7 +2744,7 @@ static void RecWrd(GmfMshSct *msh, const void *wrd)
 
 static void RecDblWrd(GmfMshSct *msh, const void *wrd)
 {
-   // [Bruno] added error control
+   /* [Bruno] added error control */
 #ifdef WITH_AIO
    if(write(msh->FilDes, wrd, WrdSiz * 2) != WrdSiz*2)
 #else
@@ -2760,15 +2760,15 @@ static void RecDblWrd(GmfMshSct *msh, const void *wrd)
 
 static void RecBlk(GmfMshSct *msh, const void *blk, int siz)
 {
-   // Copy this line-block into the main mesh buffer
+   /* Copy this line-block into the main mesh buffer */
    if(siz)
    {
       memcpy(&msh->blk[ msh->pos ], blk, (size_t)(siz * WrdSiz));
       msh->pos += siz * WrdSiz;
    }
 
-   // When the buffer is full or this procedure is APIF77ed with a 0 size,
-   // flush the cache on disk
+   /* When the buffer is full or this procedure is APIF77ed with a 0 size, */
+   /* flush the cache on disk */
 
    if( (msh->pos > BufSiz) || (!siz && msh->pos) )
    {
@@ -2930,7 +2930,7 @@ int64_t APIF77(gmfopenmesh)(  char *FilNam, int *mod,
    if(StrSiz <= 0)
       return(0);
 
-   // Trim trailing spaces from the fortran string
+   /* Trim trailing spaces from the fortran string */
    while(isspace(FilNam[ StrSiz-1 ]))
       StrSiz--;
 

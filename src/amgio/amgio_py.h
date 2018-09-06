@@ -21,4 +21,4 @@ int py_WriteMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
 		    int Dim);
 void py_WriteSolution__ (char *SolNam, PyObject *pyVer, PyObject *pySol, PyObject *pySolHeader, int NbrVer, int Dim);
 
-#endif // AMGIO PY HEADER
+#endif /* AMGIO PY HEADER */

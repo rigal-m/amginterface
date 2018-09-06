@@ -36,7 +36,7 @@ int CheckOptions (Options *mshopt)
 		return 0;
 	}
 	
-	//--- Get mesh file extension
+	/* Get mesh file extension */
 	mshopt->InpFilTyp = GetInputFileType(mshopt->InpNam);
 	
 	if ( !mshopt->InpFilTyp ) {

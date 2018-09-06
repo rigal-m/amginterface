@@ -16,7 +16,7 @@ int AddGMFMeshSize (char *MshNam, int *SizMsh)
 		return 0;
   }
 	
-  //--- get number of entities
+  /* get number of entities */
 	SizMsh[GmfDimension]  = dim;
   SizMsh[GmfVertices]   = GmfStatKwd(InpMsh, GmfVertices);
   SizMsh[GmfTriangles]  = GmfStatKwd(InpMsh, GmfTriangles);
@@ -27,7 +27,7 @@ int AddGMFMeshSize (char *MshNam, int *SizMsh)
 	SizMsh[GmfHexahedra]   = GmfStatKwd(InpMsh, GmfHexahedra);
 	SizMsh[GmfQuadrilaterals] = GmfStatKwd(InpMsh, GmfQuadrilaterals);
 	
-	//printf("Pri %d, Pyr %d, Hex %d\n", SizMsh[GmfPrisms], SizMsh[GmfPyramids], SizMsh[GmfHexahedra]);
+	/* printf("Pri %d, Pyr %d, Hex %d\n", SizMsh[GmfPrisms], SizMsh[GmfPyramids], SizMsh[GmfHexahedra]); */
 
   if ( SizMsh[GmfVertices] <= 0 ) {
     fprintf(stderr,"\n  ## ERROR: NO VERTICES. IGNORED\n");
@@ -55,7 +55,7 @@ int LoadGMFMesh (char *MshNam, Mesh *Msh)
 	strcpy(Msh->MshNam, MshNam);
 	Msh->FilTyp = FILE_GMF;
 
-  //printf("  %%%% %s OPENED (READ)\n",MshNam);
+  /* printf("  %%%% %s OPENED (READ)\n",MshNam); */
 		
 	Msh->NbrVer = Msh->NbrTri = Msh->NbrEfr = 0;
 	Msh->NbrTet = Msh->NbrHex = Msh->NbrQua = 0;
@@ -63,7 +63,7 @@ int LoadGMFMesh (char *MshNam, Mesh *Msh)
 	NbrVer = NbrTri = NbrEfr = 0;
 	NbrTet = NbrHex = NbrQua = NbrPri = NbrPyr = 0;
 	
-	//--- Read vertices
+	/* Read vertices */
 	NbrVer = GmfStatKwd(InpMsh, GmfVertices);	
 	
 	GmfGotoKwd(InpMsh, GmfVertices);
@@ -84,7 +84,7 @@ int LoadGMFMesh (char *MshNam, Mesh *Msh)
 	}
 
 
-	//--- Read Triangles
+	/* Read Triangles */
 	NbrTri = GmfStatKwd(InpMsh, GmfTriangles);	
 	GmfGotoKwd(InpMsh, GmfTriangles);
   for (i=1; i<=NbrTri; ++i) {
@@ -94,7 +94,7 @@ int LoadGMFMesh (char *MshNam, Mesh *Msh)
 		AddTriangle(Msh,Msh->NbrTri,is,ref);
   }
 	
-	//--- Read Quads
+  /* Read Quads */
 	NbrQua = GmfStatKwd(InpMsh, GmfQuadrilaterals);	
 	GmfGotoKwd(InpMsh, GmfQuadrilaterals);
   for (i=1; i<=NbrQua; ++i) {
@@ -104,7 +104,7 @@ int LoadGMFMesh (char *MshNam, Mesh *Msh)
 		AddQuadrilateral(Msh,Msh->NbrQua,is,ref);
   }
 	
-	//--- Read boundary edges
+  /* Read boundary edges */
 	NbrEfr = GmfStatKwd(InpMsh, GmfEdges);	
 	GmfGotoKwd(InpMsh, GmfEdges);
   for (i=1; i<=NbrEfr; ++i) {
@@ -113,7 +113,7 @@ int LoadGMFMesh (char *MshNam, Mesh *Msh)
 		AddEdge(Msh,Msh->NbrEfr,bufInt,ref);
   }
 
-	//--- Read tetrahedra
+  /* Read tetrahedra */
 	NbrTet = GmfStatKwd(InpMsh, GmfTetrahedra);	
 	GmfGotoKwd(InpMsh, GmfTetrahedra);
   for (i=1; i<=NbrTet; ++i) {
@@ -123,7 +123,7 @@ int LoadGMFMesh (char *MshNam, Mesh *Msh)
   }
 	
 
-	//--- Read Prisms
+  /* Read Prisms */
 	NbrPri = GmfStatKwd(InpMsh, GmfPrisms);	
 	GmfGotoKwd(InpMsh, GmfPrisms);
   for (i=1; i<=NbrPri; ++i) {
@@ -132,7 +132,7 @@ int LoadGMFMesh (char *MshNam, Mesh *Msh)
 		AddPrism(Msh,Msh->NbrPri,bufInt,ref);
   }
 	
-	//--- Read Pyramids
+  /* Read Pyramids */
 	NbrPyr = GmfStatKwd(InpMsh, GmfPyramids);	
 	GmfGotoKwd(InpMsh, GmfPyramids);
   for (i=1; i<=NbrPyr; ++i) {
@@ -141,7 +141,7 @@ int LoadGMFMesh (char *MshNam, Mesh *Msh)
 		AddPyramid(Msh,Msh->NbrPyr,bufInt,ref);
   }
 	
-	//--- Read Hexahedra
+  /* Read Hexahedra */
 	NbrHex = GmfStatKwd(InpMsh, GmfHexahedra);	
 	GmfGotoKwd(InpMsh, GmfHexahedra);
   for (i=1; i<=NbrHex; ++i) {
@@ -155,7 +155,7 @@ int LoadGMFMesh (char *MshNam, Mesh *Msh)
 		return 0;
   }
 	
-	//printf("NbrVer %d NbrTri %d NbrEfr %d NbrHex %d NbrPri %d NbrPyr %d\n", Msh->NbrVer, Msh->NbrTri, Msh->NbrEfr, Msh->NbrHex, Msh->NbrPri, Msh->NbrPyr);
+	/* printf("NbrVer %d NbrTri %d NbrEfr %d NbrHex %d NbrPri %d NbrPyr %d\n", Msh->NbrVer, Msh->NbrTri, Msh->NbrEfr, Msh->NbrHex, Msh->NbrPri, Msh->NbrPyr); */
 	
 	return 1;
 }
@@ -182,7 +182,7 @@ int LoadGMFSolution(char *SolNam, Mesh *Msh)
 		return 0;
   }
 
-  //printf("  %%%% %s OPENED\n",SolNam);
+  /* printf("  %%%% %s OPENED\n",SolNam); */
 	
 	strcpy(Msh->SolNam, SolNam);
 
@@ -204,7 +204,7 @@ int LoadGMFSolution(char *SolNam, Mesh *Msh)
 		return 0;
 	} 
   
-	//--- Allocate Msh->Sol
+	/* Allocate Msh->Sol */
 	
 	Msh->Sol = (double*) malloc(sizeof(double)*(Msh->NbrVer+1)*SolSiz);
 	memset(Msh->Sol, 0, sizeof(double)*(Msh->NbrVer+1)*SolSiz);
@@ -236,7 +236,7 @@ int LoadGMFSolution(char *SolNam, Mesh *Msh)
 			sprintf(Msh->SolTag[i], "field_%d", i);	
 		}
 	}
-  //--- Read solution
+	/* Read solution */
   GmfGotoKwd(SolMsh, SolTyp);
   
   bufDbl = (double*)malloc(sizeof(double)*SolSiz);
@@ -256,97 +256,97 @@ int LoadGMFSolution(char *SolNam, Mesh *Msh)
 	return 1;
 }
 
-//
-//int WriteSegMesh(char *nam, Mesh *Msh)
-//{
-//	int Dim = Msh->Dim;
-//	
-//	int NbrEfr  = Msh->NbrEfr;
-//	double3*Ver = Msh->Ver;
-//	int3*Efr    = Msh->Efr;
-//	
-//	int iEfr, refMax=-1, iRef, vid=-1, Nbv=0;
-//	
-//	char OutNam[1024];
-//	
-//	FILE *OutFil=NULL;
-//	
-//	sprintf(OutNam, "%s.seg", nam);
-// 
-//	OutFil = fopen(OutNam, "wb");
-//	
-//	//--- Get Max ref
-//	
-//	refMax=-1;
-//	
-//	for (iEfr=1; iEfr<=NbrEfr; iEfr++) {
-//		refMax = max(refMax, Efr[iEfr][2]);
-//	}
-//	
-//	//--- Nbr ver / ref?
-//	
-//	int* NbvRef = (int*) malloc(sizeof(int)*(refMax+1));
-//	memset(NbvRef, 0, sizeof(int)*(refMax+1));
-//	
-//	for (iEfr=1; iEfr<=NbrEfr; iEfr++) {
-//		NbvRef[Efr[iEfr][2]]++;
-//	}
-//	
-//	int * Tag = (int*) malloc(sizeof(int)*(Msh->NbrVer+1));
-//	
-//	for (iRef=1; iRef<=refMax; iRef++) {
-//		if ( NbvRef[iRef] < 1  )
-//			continue;
-//		
-//		printf("MARKER %d : %d edges\n", iRef, NbvRef[iRef]);
-//	
-//		memset(Tag,0,sizeof(int)*(Msh->NbrVer+1));
-//	
-//		for (iEfr=1; iEfr<=NbrEfr; iEfr++) {
-//			for (i=0; i<2; ++i) {
-//	      vid = Efr[iEfr][i];
-//				Tag[vid] = 1;
-//	    }
-//		}
-//		
-//		Nbv = 0;
-//		for (iVer=1; iVer<=NbrVer; iVer++) {
-//			if ( Tag[vid] == 1 )
-//				Nbv++;
-//		}
-//				
-//		for (iVer=1; iVer<=NbrVer; iVer++) {
-//			if ( Tag[iVer] != 1  )
-//				continue;
-//						
-//			fprintf(OutFil, "%d\n", vid);
-//		}
-//		
-//	}
-//
-//	
-//	
-//	for (iEfr=1; iEfr<=NbrEfr; iEfr++) {
-//		
-//		for (i=0; i<2; ++i) {
-//      idx[i] = (long long)(Efr[iEfr][i]);
-//    }
-//			
-//	}
-//	
-//	if (Tag)
-//		free(Tag);
-//	
-//	if (OutFil)
-//		fclose(OutFil);
-//	
-//}
-//
+/*
+int WriteSegMesh(char *nam, Mesh *Msh)
+{
+    int Dim = Msh->Dim;
+	
+    int NbrEfr  = Msh->NbrEfr;
+    double3*Ver = Msh->Ver;
+    int3*Efr    = Msh->Efr;
+	
+    int iEfr, refMax=-1, iRef, vid=-1, Nbv=0;
+	
+    char OutNam[1024];
+	
+    FILE *OutFil=NULL;
+	
+    sprintf(OutNam, "%s.seg", nam);
+ 
+    OutFil = fopen(OutNam, "wb");
+	
+    // Get Max ref
+	
+    refMax=-1;
+	
+    for (iEfr=1; iEfr<=NbrEfr; iEfr++) {
+	refMax = max(refMax, Efr[iEfr][2]);
+    }
+	
+    // Nbr ver / ref?
+	
+    int* NbvRef = (int*) malloc(sizeof(int)*(refMax+1));
+    memset(NbvRef, 0, sizeof(int)*(refMax+1));
+	
+    for (iEfr=1; iEfr<=NbrEfr; iEfr++) {
+	NbvRef[Efr[iEfr][2]]++;
+    }
+	
+    int * Tag = (int*) malloc(sizeof(int)*(Msh->NbrVer+1));
+	
+    for (iRef=1; iRef<=refMax; iRef++) {
+	if ( NbvRef[iRef] < 1  )
+	    continue;
+		
+	printf("MARKER %d : %d edges\n", iRef, NbvRef[iRef]);
+	
+	memset(Tag,0,sizeof(int)*(Msh->NbrVer+1));
+	
+	for (iEfr=1; iEfr<=NbrEfr; iEfr++) {
+	    for (i=0; i<2; ++i) {
+		vid = Efr[iEfr][i];
+		Tag[vid] = 1;
+	    }
+	}
+		
+	Nbv = 0;
+	for (iVer=1; iVer<=NbrVer; iVer++) {
+	    if ( Tag[vid] == 1 )
+		Nbv++;
+	}
+				
+	for (iVer=1; iVer<=NbrVer; iVer++) {
+	    if ( Tag[iVer] != 1  )
+		continue;
+						
+	    fprintf(OutFil, "%d\n", vid);
+	}
+		
+    }
+
+	
+	
+    for (iEfr=1; iEfr<=NbrEfr; iEfr++) {
+		
+	for (i=0; i<2; ++i) {
+	    idx[i] = (long long)(Efr[iEfr][i]);
+	}
+			
+    }
+	
+    if (Tag)
+	free(Tag);
+	
+    if (OutFil)
+	fclose(OutFil);
+	
+}
+*/
 
 
 int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
 {
-    int64_t   OutMsh; // Can cause segfault if OutMesh declared as int
+    int64_t   OutMsh; /* Can cause segfault if OutMesh declared as int */
     int       FilVer, i, j;
     int       iVer, iTri, iEfr, iTet, iQua; 
     long long idx[6];
@@ -364,7 +364,7 @@ int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
     int5*Qua    = Msh->Qua;
 	
 	
-    //--- Define file name extension
+    /* Define file name extension */
     strcpy(OutFil,nam);
 
     if ( OptBin == 1 )
@@ -374,14 +374,14 @@ int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
 
     FilVer = GmfDouble;
 
-    //--- Open file
+    /* Open file */
     if ( 0 > (OutMsh = GmfOpenMesh(OutFil, GmfWrite, FilVer, Dim)) ) {
 	printf("  ## ERROR: Cannot open mesh file %s ! \n",OutFil);
 	return 0;
     }
-    //printf("  %%%% %s OPENED (WRITE)\n",OutFil);
+    /* printf("  %%%% %s OPENED (WRITE)\n",OutFil); */
 
-    //--- Write vertices
+    /* Write vertices */
     GmfSetKwd(OutMsh, GmfVertices, NbrVer);
 
     if ( Msh->Dim == 2 ) {
@@ -398,7 +398,7 @@ int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
     }
 	
     if ( Msh->Tri > 0 ) {
-  	//--- Write triangles
+	/* Write triangles */
   	GmfSetKwd(OutMsh, GmfTriangles, NbrTri);
   	for (iTri=1; iTri<=NbrTri; ++iTri) {
 	    for (i=0; i<3; ++i) {
@@ -409,7 +409,7 @@ int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
     }
 	
     if ( Msh->Qua > 0 ) {
-  	//--- Write quads
+	/* Write quads */
   	GmfSetKwd(OutMsh, GmfQuadrilaterals, NbrQua);
   	for (iQua=1; iQua<=NbrQua; ++iQua) {
 	    for (i=0; i<4; ++i) {
@@ -421,7 +421,7 @@ int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
 
 
     if ( Msh->NbrTet > 0 ) {
-  	//--- Write tetrahedra
+	/* Write tetrahedra */
   	GmfSetKwd(OutMsh, GmfTetrahedra, Msh->NbrTet);
   	for (iTet=1; iTet<=Msh->NbrTet; ++iTet) {
 	    for (i=0; i<4; ++i) {
@@ -433,7 +433,7 @@ int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
 
 
     if ( Msh->NbrPri > 0  ) {
-  	//--- Write prisms
+	/* Write prisms */
   	GmfSetKwd(OutMsh, GmfPrisms, Msh->NbrPri);
   	for (i=1; i<=Msh->NbrPri; ++i) {
 	    for (j=0; j<6; ++j) {
@@ -445,7 +445,7 @@ int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
     }
 
     if ( Msh->NbrPyr > 0 ) {
-  	//--- Write pyr
+	/* Write pyr */
   	GmfSetKwd(OutMsh, GmfPyramids, Msh->NbrPyr);
   	for (i=1; i<=Msh->NbrPyr; ++i) {
 	    for (j=0; j<5; ++j) {
@@ -456,7 +456,7 @@ int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
     }	
 	
     if ( Msh->NbrEfr ) {
-  	//--- Write Edges
+	/* Write Edges */
   	GmfSetKwd(OutMsh, GmfEdges, NbrEfr);
   	for (iEfr=1; iEfr<=NbrEfr; ++iEfr) {
 	    for (i=0; i<2; ++i) {
@@ -466,7 +466,7 @@ int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
   	}
     }
 
-    //--- close mesh file
+    /* close mesh file */
     if ( !GmfCloseMesh(OutMsh) ) {
 	printf("  ## ERROR: Cannot close mesh file %s ! \n",OutFil);
 	return 0;
@@ -492,12 +492,12 @@ int WriteGMFSolution(char *SolNam, double *Sol, int SolSiz, int NbrVer, int Dim,
 	return 0;
     }
 	
-    //--- Open solution file
+    /* Open solution file */
     if ( !(OutSol = GmfOpenMesh(SolNam, GmfWrite, GmfDouble, Dim)) ) {
 	fprintf(stderr,"  ## ERROR: Cannot open solution file %s ! \n",SolNam);
 	exit(1);
     }
-    //printf("  %%%% %s OPENED (WRITE)\n",SolNam);
+    /* printf("  %%%% %s OPENED (WRITE)\n",SolNam); */
 
     GmfSetKwd(OutSol, GmfSolAtVertices, NbrVer, NbrFld, FldTab);
 	

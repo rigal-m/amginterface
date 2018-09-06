@@ -19,9 +19,9 @@ int ConvertGMFtoSU2Sol (Options *mshopt)
 		return 0;
 	}
 
-	//PrintMeshInfo (Msh);
+	/* PrintMeshInfo (Msh); */
 	
-	//--- Get header information from reference file
+	/* Get header information from reference file */
 
 	if ( strcmp(mshopt->HeaderNam, "") ) {
 
@@ -92,7 +92,7 @@ int ConvertSU2SolToGMF (Options *mshopt)
 		return 0;
 	}
 
-	//PrintMeshInfo (Msh);
+	/* PrintMeshInfo (Msh); */
 
 	WriteGMFMesh(mshopt->OutNam, Msh, 1);
 
@@ -143,7 +143,7 @@ int SplitSolution (Mesh *Msh, char *prefix, char *adap_sensor)
 	
 	OutSol = (double*)malloc(sizeof(double)*(Msh->NbrVer+1)*NbrFld);
 	
-	//--- Get fields indices
+	/* Get fields indices */
 
 	int iMach = -1;
 	int iPres = -1;

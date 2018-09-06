@@ -17,7 +17,7 @@ int py_ConvertSU2toLibmeshb( char *MshNam, char *SolNam, char *OutNam )
     strcpy(mshopt->InpNam,MshNam);
     if (NULL != SolNam) strcpy(mshopt->SolNam,SolNam);
 
-    mshopt->clean = 0; // remove unconnected vertices
+    mshopt->clean = 0; /* remove unconnected vertices */
 
     if ( !CheckOptions(mshopt) ) {
 	sprintf(error_msg, "py_ConvertSU2toLibmeshb: mesh options incorrect\n");
@@ -41,7 +41,7 @@ int py_ConvertLibmeshbtoSU2( char *MshNam, char *SolNam, char *OutNam )
     strcpy(mshopt->InpNam,MshNam);
     strcpy(mshopt->SolNam,SolNam);
 	
-    mshopt->clean = 0; // remove unconnected vertices
+    mshopt->clean = 0; /* remove unconnected vertices */
 	
     if ( !CheckOptions(mshopt) ) {
 	sprintf(error_msg, "py_ConvertLibmeshbtoSU2: mesh options incorrect\n");
@@ -88,7 +88,7 @@ int py_ReadMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
     strcpy(mshopt->InpNam,MshNam);
     strcpy(mshopt->SolNam,SolNam);
 
-    //--- Open mesh/solution file
+    /* Open mesh/solution file */
 
     Mesh *Msh = NULL;
     Msh = SetupMeshAndSolution (mshopt->InpNam, mshopt->SolNam);
@@ -141,14 +141,14 @@ int py_ReadMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
 		goto err;
     }
 
-    //--- First row of Markers contains dimension
+    /* First row of Markers contains dimension */
     if (-1 == PyList_Append(pyMarkers, PyInt_FromLong(Msh->Dim))) goto err;
     for (i=1; i<=Msh->NbrMarkers; ++i){
 	if (-1 ==
 	    PyList_Append(pyMarkers, PyString_FromString(Msh->Markers[i])))
 	    goto err;
     }
-	
+
     for (i=0; i<=Msh->SolSiz; i++){
 	if (-1 ==
 	    PyList_Append(pySolHeader, PyString_FromString(Msh->SolTag[i])))
@@ -157,7 +157,7 @@ int py_ReadMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
 	
     if ( Msh->Sol ) {
 		
-	//--- Output solution
+	/* Output solution */
 	int iVer;
 	for (iVer=1; iVer<=Msh->NbrVer; iVer++) {
 	    for (i=0; i<Msh->SolSiz; i++) {
@@ -195,6 +195,7 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
     PyObject *dimension  = NULL;
 
     npy_intp dim[2];
+    int i;
 
     /* Converting the Python names into strings */
     char *mesh_name_ = NULL;
@@ -473,50 +474,62 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	    fprintf(stderr, "Error: no dimension was found\n");
 	    goto err;
 	}
-    
+
 	if (NULL != VerArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "xyz", VerArray))
 		goto err;
+	    /* Py_DECREF(VerArray); */ /* Bug occuring when VerArray is decref. *
+	                                * If uncommented, a description of      *
+					* this error will be printed in the log *
+	                                * file.                                 */
 	}
-    
+
 	if (NULL != TriArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "Triangles", TriArray))
 		goto err;
+	    Py_DECREF(TriArray);
 	}
     
 	if (NULL != TetArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "Tetrahedra", TetArray))
 		goto err;
+	    Py_DECREF(TetArray);
 	}
     
 	if (NULL != EdgArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "Edges", EdgArray))
 		goto err;
+	    Py_DECREF(EdgArray);
 	}
 
 	if (NULL != HexArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "Hexahedra", HexArray))
 		goto err;
+	    Py_DECREF(HexArray);
 	}
 
 	if (NULL != QuaArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "Quadrilaterals", QuaArray))
 		goto err;
+	    Py_DECREF(QuaArray);
 	}
 
 	if (NULL != PyrArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "Pyramids", PyrArray))
 		goto err;
+	    Py_DECREF(PyrArray);
 	}
 
 	if (NULL != PriArray) {
 	    if (-1 == PyDict_SetItemString(mesh, "Prisms", PriArray))
 		goto err;
+	    Py_DECREF(PriArray);
 	}
 
 	if (NULL != SolArray){ 
 	    if (-1 == PyDict_SetItemString(mesh, "solution", SolArray))
 		goto err;
+	    Py_DECREF(SolArray);
 	}
 
 	if (NULL != SolTagList) {
@@ -540,7 +553,7 @@ PyObject *py_GetMeshToDict__ (PyObject *mesh_name, PyObject *solution_name)
 	item = PyDict_New();
 	if (NULL == item) goto err;
 	int SolTag_len = PyList_Size(SolTagList);
-	for (int i = 0 ; i < SolTag_len ; ++i) {
+	for (i = 0 ; i < SolTag_len ; ++i) {
 	    item_ = PyList_GetItem(SolTagList, i);
 	    if (NULL == item_) goto err;
 	    value = Py_BuildValue("i", i);
@@ -635,6 +648,8 @@ int py_WriteMeshFromDict__ (PyObject *mesh, PyObject *mesh_name,
 
     /* We extract all the items from the mesh representation */
     int Dim = 3;
+    int i;
+    int j;
     
     key = PyUnicode_FromString("Triangles");
     if (NULL == key) goto err;
@@ -810,8 +825,8 @@ int py_WriteMeshFromDict__ (PyObject *mesh, PyObject *mesh_name,
 	siz = PyArray_DIMS((PyArrayObject *)VerArray);
 	VerList = PyList_New(siz[0]*3);
 	if (NULL == VerList) goto err;
-	for (int i = 0 ; i < siz[0] ; ++i) {
-	    for (int j = 0 ; j < 2 ; ++j) {
+	for (i = 0 ; i < siz[0] ; ++i) {
+	    for (j = 0 ; j < 2 ; ++j) {
 		double val_ = *((double *)PyArray_GETPTR2((PyArrayObject *)VerArray, i, j));
 		item = PyFloat_FromDouble(val_);
 		if (NULL == item) goto err;
@@ -877,11 +892,11 @@ int py_WriteSolFromDict__ (PyObject *SolDict, PyObject *solution_name)
 {
     _import_array();
 
-    PyObject *dim = NULL;    // Dimension
-    PyObject *soltag = NULL; // Solution tag
+    PyObject *dim = NULL;    /* Dimension */
+    PyObject *soltag = NULL; /* Solution tag */
 
-    PyObject *VerList = NULL; // Flattened list of vertices
-    PyObject *SolList = NULL; // Flattened list of vertices
+    PyObject *VerList = NULL; /* Flattened list of vertices */
+    PyObject *SolList = NULL; /* Flattened list of vertices */
 
     PyArrayObject *VerArray = NULL;
     PyArrayObject *SolArray = NULL;
@@ -958,6 +973,7 @@ PyObject *py_CreateSensor__ (PyObject *SolDict, PyObject *sensor)
     PyArrayObject *SensorArray = NULL;
 
     npy_intp arrayDims[2];
+    int i;
 
     VerArray = (PyArrayObject *)PyDict_GetItemString(SolDict, "xyz");
     if (NULL == VerArray) goto err;
@@ -985,7 +1001,7 @@ PyObject *py_CreateSensor__ (PyObject *SolDict, PyObject *sensor)
     	if (NULL == SensorArray) goto err;
     	int j = PyLong_AsLong(iMach);
     	Py_DECREF(iMach);
-    	for (int i = 0 ; i < arrayDims[0] ; ++i) {
+    	for (i = 0 ; i < arrayDims[0] ; ++i) {
     	    double val = *((double *)PyArray_GETPTR2(SolArray, i, j));
     	    *((double *)PyArray_GETPTR2(SensorArray, i, 0)) = val;
     	}
@@ -1007,7 +1023,7 @@ PyObject *py_CreateSensor__ (PyObject *SolDict, PyObject *sensor)
     	if (NULL == SensorArray) goto err;
     	int j = PyLong_AsLong(iPres);
     	Py_DECREF(iPres);
-    	for (int i = 0 ; i < arrayDims[0] ; ++i) {
+    	for (i = 0 ; i < arrayDims[0] ; ++i) {
     	    double val = *((double *)PyArray_GETPTR2(SolArray, i, j));
     	    *((double *)PyArray_GETPTR2(SensorArray, i, 0)) = val;
     	}
@@ -1033,7 +1049,7 @@ PyObject *py_CreateSensor__ (PyObject *SolDict, PyObject *sensor)
     	int k = PyLong_AsLong(iPres);
     	Py_DECREF(iMach);
     	Py_DECREF(iPres);
-    	for (int i = 0 ; i < arrayDims[0] ; ++i) {
+    	for (i = 0 ; i < arrayDims[0] ; ++i) {
     	    double val = *((double *)PyArray_GETPTR2(SolArray, i, j));
     	    *((double *)PyArray_GETPTR2(SensorArray, i, 0)) = val;
     	    val = *((double *)PyArray_GETPTR2(SolArray, i, k));
@@ -1096,7 +1112,7 @@ int py_WriteMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
     for (i=0; i<GmfMaxKwd; i++)
 	SizMsh[i] = 0;
 	
-    //--- Get mesh size
+    /* Get mesh size */
 
     if ( PyList_Check(pyVer) )
 	SizMsh[GmfVertices] = PyList_Size(pyVer);
@@ -1125,13 +1141,13 @@ int py_WriteMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
     if ( PyList_Check(pyMarkers) )
 	NbrMarkers = PyList_Size(pyMarkers);
 	
-    //--- Allocate mesh
+    /* Allocate mesh */
 	
     Msh = AllocMesh(SizMsh);
 	
     Msh->Dim = Dim;
 	
-    //--- Fill mesh
+    /* Fill mesh */
 	
     if ( PyList_Check(pyTri) )
 	{
@@ -1155,8 +1171,8 @@ int py_WriteMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
 		    Msh->NbrTri++;
 		    AddTriangle(Msh,Msh->NbrTri,is,ref);
 				
-		    //printf("-- Add tri %d : %d %d %d (ref %d)\n", Msh->NbrTri, is[0], is[1], is[2], ref);
-		    //exit(1);
+		    /* printf("-- Add tri %d : %d %d %d (ref %d)\n", Msh->NbrTri, is[0], is[1], is[2], ref); */
+		    /* exit(1); */
 		}
 	}
 	
@@ -1322,8 +1338,8 @@ int py_WriteMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
 		    Msh->NbrVer++;
 		    AddVertex(Msh,Msh->NbrVer,crd);
 				
-		    //printf("ADD VERTEX %d : %lf %lf %lf\n", Msh->NbrVer, crd[0], crd[1], crd[2]);
-		    //exit(1);
+		    /* printf("ADD VERTEX %d : %lf %lf %lf\n", Msh->NbrVer, crd[0], crd[1], crd[2]); */
+		    /* exit(1); */
 		}
 	}
 	
@@ -1337,7 +1353,7 @@ int py_WriteMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
 	}
 	
 	
-    //--- Get Solution size and check it matches the number of vertices
+    /* Get Solution size and check it matches the number of vertices */
 	
     if ( PyList_Check(pySol) )
 	siz = PyList_Size(pySol);
@@ -1373,13 +1389,13 @@ int py_WriteMesh__ (char *MshNam, char *SolNam, PyObject *pyVer,
 		
     }
 	
-    //--- Write Mesh
+    /* Write Mesh */
 	
     int FilTyp = GetInputFileType(MshNam);
     char *ptr = NULL;
     char BasNam[1024], BasNamSol[1024], OutSol[1024];
 	
-    // --- Get BasNam
+    /* Get BasNam */
 	
     strcpy(BasNam,MshNam);
 
@@ -1505,8 +1521,8 @@ void py_WriteSolution__ (char *SolNam, PyObject *pyVer, PyObject *pySol, PyObjec
 						
 			}
 					
-			//printf("ADD VERTEX %d : %lf %lf %lf\n", Msh->NbrVer, crd[0], crd[1], crd[2]);
-			//exit(1);
+			/* printf("ADD VERTEX %d : %lf %lf %lf\n", Msh->NbrVer, crd[0], crd[1], crd[2]); */
+			/* exit(1); */
 		    }
 	    }
 		

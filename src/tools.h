@@ -14,8 +14,7 @@
 
 PyObject *flatten_double_PyArray(PyArrayObject *array);
 PyObject *flatten_int_PyArray(PyArrayObject *array);
-void *unflat_PyList(PyObject *list, npy_intp dim[2], size_t siz);
 void *unflat_int_PyList(PyObject *list, npy_intp dim[2]);
 void *unflat_double_PyList(PyObject *list, npy_intp dim[2]);
 
-#endif // TOOLS HEADER
+#endif /* TOOLS HEADER */

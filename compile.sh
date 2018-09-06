@@ -43,7 +43,7 @@ case $1 in
 		fi
 
 		HEADERS="-I./src -I./src/libmeshb -I./src/feflo.a/core -I./src/feflo.a/util -I./src/feflo.a/libol $INCPYTHON -I$INCNUMPY"
-		C_FLAGS="-Di4 -fPIC"
+		C_FLAGS="-Di4 -fPIC -ansi"
 
 		# su2 support
 		echo "Generating objects"

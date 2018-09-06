@@ -12,8 +12,9 @@
 
 int is_char_in_str(char c, const char *str)
 {
+    int i;
     int len = strlen(str);
-    for (int i = 0 ; i < len ; ++i) {
+    for (i = 0 ; i < len ; ++i) {
 	if (str[i] == c) return 1;
     }
     return 0;
@@ -201,6 +202,7 @@ PyObject *get_sub_iterations__ (PyObject *ConfigDict)
 
 PyObject *get_residual_reduction__ (PyObject *ConfigDict)
 {
+    int i;
     PyObject *item = NULL;
     PyObject *List = NULL;
     PyObject *Res = NULL;
@@ -238,7 +240,7 @@ PyObject *get_residual_reduction__ (PyObject *ConfigDict)
     Res = PyList_New(0);
     if (NULL == Res) goto err;
 
-    for (int i = 0 ; i < length ; ++i) {
+    for (i = 0 ; i < length ; ++i) {
 	if (-1 == PyList_Append(Res, PyDict_GetItemString(ConfigDict, "RESIDUAL_REDUCTION")))
 	    goto err;
     }
@@ -258,6 +260,7 @@ PyObject *get_residual_reduction__ (PyObject *ConfigDict)
 
 PyObject *get_ext_iter__ (PyObject *ConfigDict)
 {
+    int i;
     PyObject *item = NULL;
     PyObject *List = NULL;
     PyObject *ExtIterList = NULL;
@@ -288,7 +291,7 @@ PyObject *get_ext_iter__ (PyObject *ConfigDict)
     ExtIterList = PyList_New(nbExtIter);
     if (NULL == ExtIterList) goto err;
 
-    for (int i = 0 ; i < nbExtIter ; ++i) {
+    for (i = 0 ; i < nbExtIter ; ++i) {
 	if (-1 == PyList_SetItem(ExtIterList, i,
 				 PyDict_GetItemString(ConfigDict, "EXT_ITER")))
 	    goto err;
@@ -306,6 +309,7 @@ PyObject *get_ext_iter__ (PyObject *ConfigDict)
 
 PyObject *print_adap_options__ (PyObject *ConfigDict, PyObject *KwdsList)
 {
+    int i;
     PyObject *String = NULL;
     PyObject *NewString = NULL;
     PyObject *Kwd = NULL;
@@ -318,7 +322,7 @@ PyObject *print_adap_options__ (PyObject *ConfigDict, PyObject *KwdsList)
     int len = PyList_Size(KwdsList);
     if (-1 == len) goto err;
 
-    for (int i = 0 ; i < len ; ++i) {
+    for (i = 0 ; i < len ; ++i) {
 	Kwd = PyList_GetItem(KwdsList, i);
 	if (NULL == Kwd) goto err;
 	if (PyDict_Contains(ConfigDict, Kwd)) {
@@ -355,6 +359,7 @@ PyObject *print_adap_options__ (PyObject *ConfigDict, PyObject *KwdsList)
 
 static PyObject *su2_mesh_readlines__ (PyObject *args)
 {
+    int i;
     PyObject *MeshFile = NULL;
     PyObject *nbLines = NULL;
     PyObject *List = NULL;
@@ -374,7 +379,7 @@ static PyObject *su2_mesh_readlines__ (PyObject *args)
     int nbLines_ = PyLong_AsLong(nbLines);
     if (-1 == nbLines_) goto err;
 
-    for (int i = 0 ; i < nbLines_ ; ++i) {
+    for (i = 0 ; i < nbLines_ ; ++i) {
 	Line = PyFile_GetLine(MeshFile, 0);
     	if (NULL == Line) goto err;
     	read_size = PyString_Size(Line);

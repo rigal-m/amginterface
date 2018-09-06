@@ -286,7 +286,7 @@ int imin(int n, int *idx)
 
 void outwardNormalCrd(double2 crd0, double2 crd1, double *vno)
 {
-  vno[0]  = crd1[1]-crd0[1];  // define outward normal, how to verify this ? 
+  vno[0]  = crd1[1]-crd0[1];  /* define outward normal, how to verify this ?  */
   vno[1]  = crd0[0]-crd1[0];
   vno[2]  = sqrt(vno[0]*vno[0]+vno[1]*vno[1]);
 }
@@ -326,16 +326,16 @@ int RemoveUnconnectedVertices(Mesh *Msh)
 	int *Tag = (int*)malloc(sizeof(int)*(Msh->NbrVer+1));
 	memset(Tag,0,sizeof(int)*(Msh->NbrVer+1));
 	
-	//if ( Msh->Dim == 2 ) {
+	/* if ( Msh->Dim == 2 ) { */
 		for (iTri=1; iTri<=Msh->NbrTri; iTri++) {
 			for (j=0; j<3; j++) 
 				Tag[Msh->Tri[iTri][j]] = 1;
 		}
-	//}
-	//else {
-	//	printf("  ## ERROR : RemoveUnconnectedVertices : Dim 3 not implemented\n");
-	//	exit(1);
-	//}
+	/* } */
+	/* else { */
+		/* printf("  ## ERROR : RemoveUnconnectedVertices : Dim 3 not implemented\n"); */
+		/* exit(1); */
+	/* } */
 	
 	NbrVer=0;
 	for (iVer=1; iVer<=Msh->NbrVer; iVer++) {	
@@ -645,8 +645,8 @@ void switchTetIdx(int *idx, int *swi)
     
   }
 
-  //printf(" in  : %d %d %d %d \n",idx[0],idx[1],idx[2],idx[3]);
-  //printf(" out : %d %d %d %d \n",swi[0],swi[1],swi[2],swi[3]);
+  /* printf(" in  : %d %d %d %d \n",idx[0],idx[1],idx[2],idx[3]); */
+  /* printf(" out : %d %d %d %d \n",swi[0],swi[1],swi[2],swi[3]); */
   
 }
 
@@ -719,7 +719,7 @@ int GetInputFileType (char *FilNam)
 }
 
 
-//--- Transforms all letters to lower case
+/* Transforms all letters to lower case */
 int Str2Lower(char *buff)
 {
   int iChr;
@@ -730,7 +730,7 @@ int Str2Lower(char *buff)
   return 1;
 }
 
-//--- Removes all occurences of char c from str
+/* Removes all occurences of char c from str */
 void StrRemoveChars (char* s, char ch) {
 	char *p = s;
 	while (*s) {

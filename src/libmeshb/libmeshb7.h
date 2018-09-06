@@ -13,8 +13,8 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-// [Bruno] get PRINTF_INT64_MODIFIER
-// #include <geogram/third_party/pstdint.h>
+/* [Bruno] get PRINTF_INT64_MODIFIER */
+/* #include <geogram/third_party/pstdint.h> */
 
 #include <stdint.h>
 
@@ -249,7 +249,7 @@ extern int GmfCpyLin(int64_t, int64_t, int);
 #endif
 
 #ifdef __cplusplus
-} // end extern "C"
+} /* end extern "C" */
 #endif
 
 #endif
