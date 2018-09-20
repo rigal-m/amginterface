@@ -82,31 +82,32 @@ int ConvertGMFtoSU2Sol (Options *mshopt)
 
 int ConvertSU2SolToGMF (Options *mshopt)
 {
-	Mesh *Msh = NULL;
-	char OutSol[1024];
+    Mesh *Msh = NULL;
+    char OutSol[1024];
 
-	Msh = SetupMeshAndSolution (mshopt->InpNam, mshopt->SolNam);
+    Msh = SetupMeshAndSolution (mshopt->InpNam, mshopt->SolNam);
 
-	if ( Msh->FilTyp != FILE_SU2 ) {
-		printf("  ## ERROR : Input mesh file must be a .su2.\n");
-		return 0;
+    if ( Msh->FilTyp != FILE_SU2 ) {
+	printf("  ## ERROR : Input mesh file must be a .su2.\n");
+	return 0;
+    }
+
+    /* PrintMeshInfo (Msh); */
+
+    WriteGMFMesh(mshopt->OutNam, Msh, 1);
+
+    if ( Msh->Sol ) {
+	sprintf(OutSol, "%s.solb", mshopt->OutNam);
+	if ( ! WriteGMFSolutionItf(OutSol, Msh) ) {
+	    printf("  ## ERROR : outputmach FAILED.\n");
 	}
+    }
 
-	/* PrintMeshInfo (Msh); */
+    if ( Msh )
+	FreeMesh(Msh);
 
-	WriteGMFMesh(mshopt->OutNam, Msh, 1);
 
-	if ( Msh->Sol ) {
-		sprintf(OutSol, "%s.solb", mshopt->OutNam);
-		if ( ! WriteGMFSolutionItf(OutSol, Msh) ) {
-			printf("  ## ERROR : outputmach FAILED.\n");
-		}
-	}
-
-	if ( Msh )
- 		FreeMesh(Msh);
-
-	return 1;
+    return 1;
 }
 
 

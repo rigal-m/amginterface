@@ -6,7 +6,8 @@ Victorien Menier Feb 2016
 
 int AddGMFMeshSize (char *MshNam, int *SizMsh)
 {
-	int dim, FilVer, InpMsh, i; 
+    int64_t InpMsh;
+    int dim, FilVer, i; 
 	
 	for (i=0; i<GmfMaxKwd; i++)
 		SizMsh[i] = 0;
@@ -40,7 +41,8 @@ int AddGMFMeshSize (char *MshNam, int *SizMsh)
 int LoadGMFMesh (char *MshNam, Mesh *Msh)
 {
 	int i, idx;
-	int dim, FilVer, InpMsh, ref; 
+	int64_t InpMsh;
+	int dim, FilVer, ref; 
 	double bufDbl[3];
 	int bufInt[8], is[8];
 	
@@ -162,7 +164,8 @@ int LoadGMFMesh (char *MshNam, Mesh *Msh)
 
 int LoadGMFSolution(char *SolNam, Mesh *Msh)
 {
-  int    SolMsh,FilVer=0,dim=0,SolTyp,iVer,i, idxVer;
+    int64_t SolMsh;
+  int    FilVer=0,dim=0,SolTyp,iVer,i, idxVer;
   int    NbrLin,NbrTyp,SolSiz,TypTab[ GmfMaxTyp ];
   double *bufDbl = NULL;
 		
@@ -479,19 +482,20 @@ int WriteGMFMesh(char *nam, Mesh *Msh, int OptBin)
 
 int WriteGMFSolution(char *SolNam, double *Sol, int SolSiz, int NbrVer, int Dim, int NbrFld, int* FldTab)
 {
-    int       OutSol, iVer;
+    int64_t OutSol;
+    int       iVer;
     double   *dbl=NULL;
-	
+
     if ( !Sol ) {
 	printf("  ## ERROR WriteGMFSolution : Sol not allocated.\n");
 	return 0;	
     }
-	
+
     if ( SolSiz < 1 ) {
 	printf("  ## ERROR WriteGMFSolution : SolSiz < 1.\n");
 	return 0;
     }
-	
+
     /* Open solution file */
     if ( !(OutSol = GmfOpenMesh(SolNam, GmfWrite, GmfDouble, Dim)) ) {
 	fprintf(stderr,"  ## ERROR: Cannot open solution file %s ! \n",SolNam);
@@ -500,17 +504,18 @@ int WriteGMFSolution(char *SolNam, double *Sol, int SolSiz, int NbrVer, int Dim,
     /* printf("  %%%% %s OPENED (WRITE)\n",SolNam); */
 
     GmfSetKwd(OutSol, GmfSolAtVertices, NbrVer, NbrFld, FldTab);
-	
+
     for (iVer=1; iVer<=NbrVer; ++iVer) {
 	dbl = &Sol[iVer*SolSiz];
 	GmfSetLin(OutSol, GmfSolAtVertices, dbl);
     }
-		
+
+    
     if ( !GmfCloseMesh(OutSol) ) {
 	printf("  ## ERROR: Cannot close solution file %s ! \n",SolNam);
 	return 0;
     }
-	
+
     return 1;
 }
 
@@ -526,6 +531,6 @@ int WriteGMFSolutionItf(char *SolNam, Mesh *Msh)
     int     Dim      = Msh->Dim; 
     int     NbrFld   = Msh->NbrFld; 
     int    *FldTab   = Msh->FldTab; 
-	
+
     return WriteGMFSolution(SolNam, Sol, SolSiz, NbrVer, Dim, NbrFld, FldTab);
 }
